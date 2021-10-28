@@ -1,3 +1,5 @@
+import scn.Level3D;
+
 class Entity {
   public static var ALL:Array<Entity> = [];
   public static var GC:Array<Entity> = [];
@@ -13,7 +15,7 @@ class Entity {
   inline function get_fx()
     return Game.ME.fx;
 
-  public var level(get, never):Level;
+  public var level(get, never):Level3D;
 
   inline function get_level()
     return Game.ME.level;

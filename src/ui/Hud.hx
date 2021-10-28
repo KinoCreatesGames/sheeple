@@ -1,5 +1,7 @@
 package ui;
 
+import scn.Level3D;
+
 class Hud extends dn.Process {
   public var game(get, never):Game;
 
@@ -11,7 +13,7 @@ class Hud extends dn.Process {
   inline function get_fx()
     return Game.ME.fx;
 
-  public var level(get, never):Level;
+  public var level(get, never):Level3D;
 
   inline function get_level()
     return Game.ME.level;

@@ -18,6 +18,9 @@ class Main extends dn.Process {
     super();
     ME = this;
 
+    // Creates the 2D root for the Main class
+    // All elements that run from the main process leverage
+    // this
     createRoot(s);
 
     // Engine settings
@@ -61,7 +64,7 @@ class Main extends dn.Process {
     controller.bind(AXIS_LEFT_Y_POS, K.UP, K.W);
     controller.bind(AXIS_LEFT_Y_NEG, K.DOWN, K.S);
     controller.bind(X, Key.SPACE, Key.F, Key.E);
-    controller.bind(A, Key.UP, Key.Z, Key.W);
+    // controller.bind(A, Key.UP, Key.Z, Key.W);
     controller.bind(B, Key.ENTER, Key.NUMPAD_ENTER);
     controller.bind(SELECT, Key.R);
     controller.bind(START, Key.N);

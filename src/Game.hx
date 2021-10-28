@@ -1,3 +1,5 @@
+import h3d.scene.Object;
+import scn.Level3D;
 import dn.Process;
 import hxd.Key;
 import dn.heaps.Controller.ControllerAccess;
@@ -18,7 +20,13 @@ class Game extends dn.Process {
   public var scroller:h2d.Layers;
 
   /** Level data **/
-  public var level:Level;
+  public var level:Level3D;
+
+  /**
+   * Top most 3D scene in the game aka
+   * highest 3D root in Heaps.
+   */
+  public var root3D:h3d.scene.Object;
 
   /** UI **/
   public var hud:ui.Hud;
@@ -30,17 +38,21 @@ class Game extends dn.Process {
     ca.setLeftDeadZone(0.2);
     ca.setRightDeadZone(0.2);
     createRootInLayers(Main.ME.root, Const.DP_BG);
+    // Create 3D Root
+    root3D = new Object();
+    Boot.ME.s3d.addChild(root3D);
 
     scroller = new h2d.Layers();
     root.add(scroller, Const.DP_BG);
     scroller.filter = new h2d.filter.ColorMatrix(); // force rendering for pixel perfect
 
     camera = new Camera();
-    level = new Level();
+
     fx = new Fx();
     hud = new ui.Hud();
     hud.hide();
 
+    startInitialGame();
     Process.resizeAll();
     trace(Lang.t._("Game is ready."));
   }
@@ -53,7 +65,7 @@ class Game extends dn.Process {
     // Play Game Loop Music
     // bgm = hxd.Res.music.juhani_stage.play(true, 0.5);
     // level = new Level(proj.all_levels.Level_0);
-    level = new Level();
+    level = new Level3D();
     hud.show();
     fx = new Fx();
   }
