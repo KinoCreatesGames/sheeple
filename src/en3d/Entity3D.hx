@@ -90,6 +90,19 @@ class Entity3D {
   public var bdy = 0.;
   public var bdz = 0.;
 
+  // Velocities + bump velocities
+  public var dxTotal(get, never):Float;
+
+  public inline function get_dxTotal() {
+    return dx + bdx;
+  }
+
+  public var dyTotal(get, never):Float;
+
+  public inline function get_dyTotal() {
+    return dy + bdy;
+  }
+
   // Frictions
   // Multipliers applied on each frame to normal velocities
   public var frictX = 0.82;
