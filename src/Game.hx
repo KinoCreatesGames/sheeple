@@ -1,3 +1,4 @@
+import en3d.Entity3D;
 import h3d.scene.Object;
 import scn.Level3D;
 import dn.Process;
@@ -136,11 +137,19 @@ class Game extends dn.Process {
 
   /** Garbage collect any Entity marked for destruction **/
   function gc() {
-    if (Entity.GC == null || Entity.GC.length == 0) return;
-
-    for (e in Entity.GC)
-      e.dispose();
-    Entity.GC = [];
+    if (Entity.GC != null) {
+      for (e in Entity.GC) {
+        e.dispose();
+      }
+      Entity.GC = [];
+    }
+    // Handle 3D entities
+    if (Entity3D.GC != null) {
+      for (e3D in Entity3D.GC) {
+        e3D.dispose();
+      }
+      Entity3D.GC = [];
+    }
   }
 
   /** Called if game is destroyed, but only at the end of the frame **/
