@@ -243,6 +243,7 @@ class Entity3D {
     if (body != null) {
       body.x = (cx + xr);
       body.y = (cy + yr);
+      body.z = (cz + zr);
     }
   }
 

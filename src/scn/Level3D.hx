@@ -42,6 +42,9 @@ class Level3D extends Process3D {
     createTest();
     createGroups();
     createEntities();
+
+    // On level Creation setup camera controller
+    new h3d.scene.CameraController(null, root3).loadFromCamera();
   }
 
   /**
@@ -85,6 +88,13 @@ class Level3D extends Process3D {
     prim.unindex();
     prim.addNormals();
     prim.addUVs();
+
+    // Create test blocks for collision checks
+    for (i in 0...20) {
+      var block = new Block(i, 0, 0);
+      block.setBody(prim, root3);
+      blockGroup.push(block);
+    }
   }
 
   /** TRUE if given coords are in level bounds **/
@@ -130,6 +140,17 @@ class Level3D extends Process3D {
     //       g.beginFill(Color.randomColor(rnd(0, 1), 0.5, 0.4));
     //     g.drawRect(cx * Const.GRID, cy * Const.GRID, Const.GRID, Const.GRID);
     //   }
+  }
+
+  override function update() {
+    super.update();
+    handleGameOver();
+  }
+
+  public function handleGameOver() {
+    if (!player.isAlive()) {
+      // Start Game Over Scene and conditions
+    }
   }
 
   override function postUpdate() {

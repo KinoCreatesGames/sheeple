@@ -70,11 +70,21 @@ class Player3D extends IsoEntity3D {
     // Blocks
     var block = level.levelCollided(x, y, cz);
     var topBlock = level.levelCollided(x, y, cz + 1);
+    // Used for checking if the player should fall later
+    var belowBlock = level.levelCollided(x, y, cz - 1);
     // Block at same level  in next cell && one above
     if (block != null) {
+      #if debug
+      trace('collided with block');
+      #else
+      #end
       if (topBlock != null) {
         return false;
       } else {
+        #if debug
+        trace('collided with free space');
+        #else
+        #end
         cz += 1;
         return true;
       }
