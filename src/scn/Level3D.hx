@@ -1,5 +1,6 @@
 package scn;
 
+import en3d.collectibles.Collectible;
 import en3d.blocks.Block;
 import en3d.Player3D;
 
@@ -32,7 +33,8 @@ class Level3D extends Process3D {
 
   public var player:en3d.Player3D;
 
-  public var blockGroup:Array<Block>;
+  public var blockGroup:Group<Block>;
+  public var collectibles:Group<Collectible>;
 
   /**
    * Score for the current level.
@@ -59,7 +61,8 @@ class Level3D extends Process3D {
    * elements that will appear within the game.
    */
   public function createGroups() {
-    blockGroup = [];
+    blockGroup = new Group<Block>();
+    collectibles = new Group<Collectible>();
   }
 
   public function createTest() {
@@ -100,7 +103,7 @@ class Level3D extends Process3D {
     for (i in 0...20) {
       var block = new Block(i, 0, 0);
       block.setBody(prim, root3);
-      blockGroup.push(block);
+      blockGroup.add(block);
     }
   }
 
@@ -127,7 +130,7 @@ class Level3D extends Process3D {
    * @param z 
    */
   public function levelCollided(x:Int, y:Int, z:Int) {
-    return blockGroup.filter((block) -> block.isAlive()
+    return blockGroup.members.filter((block) -> block.isAlive()
       && block.cx == x
       && block.cy == y
       && block.cz == z)
@@ -176,6 +179,11 @@ class Level3D extends Process3D {
     // Destroy blocks
     for (block in blockGroup) {
       block.destroy();
+    }
+
+    // Destroy Collectibles
+    for (collectible in collectibles) {
+      collectible.destroy();
     }
     super.onDispose();
   }
