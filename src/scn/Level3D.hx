@@ -101,9 +101,11 @@ class Level3D extends Process3D {
 
     // Create test blocks for collision checks
     for (i in 0...20) {
-      var block = new Block(i, 0, 0);
-      block.setBody(prim, root3);
-      blockGroup.add(block);
+      for (y in 0...20) {
+        var block = new Block(i, y, 0);
+        block.setBody(prim, root3);
+        blockGroup.add(block);
+      }
     }
   }
 
