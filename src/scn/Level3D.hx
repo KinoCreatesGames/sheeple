@@ -90,7 +90,7 @@ class Level3D extends Process3D {
   }
 
   public function createEntities() {
-    player = new en3d.Player3D(0, 0, 0, root3);
+    player = new en3d.Player3D(0, 0, 1, root3);
 
     // base primitive for all blocks
     var prim = new h3d.prim.Cube();

@@ -37,6 +37,16 @@ class Player3D extends IsoEntity3D {
   override function update() {
     super.update();
     updateControls();
+    processFall();
+  }
+
+  public function processFall() {
+    var belowBlock = level.levelCollided(cx, cy, cz - 1);
+    if (belowBlock != null) {
+      // do nothing
+    } else {
+      cz -= 1; // Fall
+    }
   }
 
   public function updateControls() {
