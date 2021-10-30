@@ -6,6 +6,7 @@ import dn.heaps.Controller.ControllerAccess;
 
 class Player3D extends IsoEntity3D {
   public var ct:ControllerAccess;
+  public var stepCount:Int = 0;
 
   public static inline var MOVE_SPD:Int = 1;
 

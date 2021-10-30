@@ -32,6 +32,11 @@ class Game extends dn.Process {
   /** UI **/
   public var hud:ui.Hud;
 
+  /**
+   * Player lives, defaults to 3 and is incremented.
+   */
+  public var playerLives:Int = 3;
+
   public function new() {
     super(Main.ME);
     ME = this;

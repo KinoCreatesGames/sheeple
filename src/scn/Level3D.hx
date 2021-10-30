@@ -34,6 +34,13 @@ class Level3D extends Process3D {
 
   public var blockGroup:Array<Block>;
 
+  /**
+   * Score for the current level.
+   * Gets updated as time goes on during the level.
+   * Initialized at 0.
+   */
+  public var score:Int = 0;
+
   public function new() {
     super(Game.ME);
     createRootInLayers(Game.ME.scroller, Const.DP_BG);

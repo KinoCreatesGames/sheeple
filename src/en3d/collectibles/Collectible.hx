@@ -15,5 +15,10 @@ class Collectible extends IsoEntity3D {
    * @param prim 
    * @param root 
    */
-  public function setBody(prim:Primitive, root:Object) {}
+  public function setBody(prim:Primitive, root:Object) {
+    var mesh = new h3d.scene.Mesh(prim, null, root);
+    mesh.material.color.setColor(0xffaafa);
+    mesh.material.shadows = false;
+    body = mesh;
+  }
 }
