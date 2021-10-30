@@ -21,4 +21,6 @@ class Assets {
     fontLarge = hxd.Res.fonts.barlow_condensed_medium_regular_32.toFont();
     tiles = dn.heaps.assets.Atlas.load("atlas/tiles.atlas");
   }
+
+  // Game assets
 }

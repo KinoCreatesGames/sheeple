@@ -67,6 +67,7 @@ class Game extends dn.Process {
     // bgm = hxd.Res.music.juhani_stage.play(true, 0.5);
     // level = new Level(proj.all_levels.Level_0);
     level = new Level3D();
+
     hud.show();
     fx = new Fx();
   }
@@ -157,8 +158,12 @@ class Game extends dn.Process {
     super.onDispose();
 
     fx.destroy();
-    for (e in Entity.ALL)
+    for (e in Entity.ALL) {
       e.destroy();
+    }
+    for (e3D in Entity3D.ALL) {
+      e3D.destroy();
+    }
     gc();
   }
 
@@ -168,6 +173,12 @@ class Game extends dn.Process {
 
     for (e in Entity.ALL)
       if (!e.destroyed) e.preUpdate();
+
+    for (e3D in Entity3D.ALL) {
+      if (!e3D.destroyed) {
+        e3D.preUpdate();
+      }
+    }
   }
 
   /** Loop that happens at the end of the frame **/
@@ -176,6 +187,11 @@ class Game extends dn.Process {
 
     for (e in Entity.ALL)
       if (!e.destroyed) e.postUpdate();
+    for (e3D in Entity3D.ALL) {
+      if (!e3D.destroyed) {
+        e3D.postUpdate();
+      }
+    }
     gc();
   }
 
@@ -185,6 +201,12 @@ class Game extends dn.Process {
 
     for (e in Entity.ALL)
       if (!e.destroyed) e.fixedUpdate();
+
+    for (e3D in Entity3D.ALL) {
+      if (!e3D.destroyed) {
+        e3D.fixedUpdate();
+      }
+    }
   }
 
   /** Main loop **/
@@ -193,6 +215,12 @@ class Game extends dn.Process {
 
     for (e in Entity.ALL)
       if (!e.destroyed) e.update();
+
+    for (e3D in Entity3D.ALL) {
+      if (!e3D.destroyed) {
+        e3D.update();
+      }
+    }
 
     if (!ui.Console.ME.isActive() && !ui.Modal.hasAny()) {
       #if hl

@@ -1,5 +1,6 @@
 package en3d;
 
+import h3d.scene.Object;
 import scn.Level3D;
 
 /**
@@ -26,12 +27,13 @@ class Entity3D {
 
   public var fx(get, never):Fx;
 
-  inline function get_fx()
+  public inline function get_fx() {
     return Game.ME.fx;
+  }
 
   public var level(get, never):Level3D;
 
-  public inline function get_level() {
+  public inline function get_level():Level3D {
     return Game.ME.level;
   }
 
@@ -86,6 +88,8 @@ class Entity3D {
 
   // Uncontrollable bump velocities, usually applied by external
   // factors (think of a bumper in Sonic for example)
+  // Multiplier applied on each frame to bump velocities
+  public var bumpFrict = 0.93;
   public var bdx = 0.;
   public var bdy = 0.;
   public var bdz = 0.;
@@ -113,6 +117,14 @@ class Entity3D {
   var actions:Array<{id:String, cb:Void -> Void, t:Float}> = [];
 
   /**
+   * The 3D object associated with this entity
+   * that will be displayed in the scene view when you add
+   * it to the screen.
+   * By default this is null
+   */
+  public var body:Null<Object>;
+
+  /**
    * 3D entity class that 
    * @param x 
    * @param y 
@@ -122,6 +134,9 @@ class Entity3D {
     // Generates a custom id with a virtual property
     uid = Const.NEXT_UNIQ;
     ALL.push(this);
+
+    cd = new dn.Cooldown(Const.FPS);
+    setPosCase(x, y, z);
   }
 
   /**
@@ -224,7 +239,12 @@ class Entity3D {
     updateActions();
   }
 
-  public function postUpdate() {}
+  public function postUpdate() {
+    if (body != null) {
+      body.x = (cx + xr);
+      body.y = (cy + yr);
+    }
+  }
 
   /**
    * Runs at a guaranteed 30 FPS.
@@ -236,5 +256,51 @@ class Entity3D {
    * Use tmod in order to make sure that your 
    * values are scaled to match the desired FPS.
    */
-  public function update() {}
+  public function update() {
+    // X
+    var steps = M.ceil(M.fabs(dxTotal * tmod));
+    var step = dxTotal * tmod / steps;
+    while (steps > 0) {
+      xr += step;
+
+      // [ add X collisions checks here ]
+
+      while (xr > 1) {
+        xr--;
+        cx++;
+      }
+      while (xr < 0) {
+        xr++;
+        cx--;
+      }
+      steps--;
+    }
+    dx *= Math.pow(frictX, tmod);
+    bdx *= Math.pow(bumpFrict, tmod);
+    if (M.fabs(dx) <= 0.0005 * tmod) dx = 0;
+    if (M.fabs(bdx) <= 0.0005 * tmod) bdx = 0;
+
+    // Y
+    var steps = M.ceil(M.fabs(dyTotal * tmod));
+    var step = dyTotal * tmod / steps;
+    while (steps > 0) {
+      yr += step;
+
+      // [ add Y collisions checks here ]
+
+      while (yr > 1) {
+        yr--;
+        cy++;
+      }
+      while (yr < 0) {
+        yr++;
+        cy--;
+      }
+      steps--;
+    }
+    dy *= Math.pow(frictY, tmod);
+    bdy *= Math.pow(bumpFrict, tmod);
+    if (M.fabs(dy) <= 0.0005 * tmod) dy = 0;
+    if (M.fabs(bdy) <= 0.0005 * tmod) bdy = 0;
+  }
 }

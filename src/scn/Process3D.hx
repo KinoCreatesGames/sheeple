@@ -46,10 +46,10 @@ class Process3D extends dn.Process {
       }
       ctx = parent3.root3;
     }
-    // Make the ctx used for this scene the parent 3d context
-    if (ctx == null) {
-      ctx = parent3.root3;
-    }
+    // // Make the ctx used for this scene the parent 3d context
+    // if (ctx == null) {
+    //   ctx = parent3.root3;
+    // }
 
     // If there is a context assign it as the root
     root3 = ctx;

@@ -22,4 +22,8 @@ class IsoEntity3D extends Entity3D {
    * @param y 
    */
   public function fromIso(x:Float, y:Float) {}
+
+  public function new(x:Int, y:Int, z:Int) {
+    super(x, y, z);
+  }
 }

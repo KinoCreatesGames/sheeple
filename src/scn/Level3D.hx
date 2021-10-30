@@ -1,6 +1,7 @@
 package scn;
 
-import en.Player;
+import en3d.blocks.Block;
+import en3d.Player3D;
 
 class Level3D extends Process3D {
   /** Level grid-based width**/
@@ -29,14 +30,26 @@ class Level3D extends Process3D {
 
   var invalidated = true;
 
-  public var player:Player;
+  public var player:en3d.Player3D;
+
+  public var blockGroup:Array<Block>;
 
   public function new() {
     super(Game.ME);
     createRootInLayers(Game.ME.scroller, Const.DP_BG);
     create3Root(Game.ME.root3D);
-    createEntities();
+    // Create level root
     createTest();
+    createGroups();
+    createEntities();
+  }
+
+  /**
+   * Creates the groups of 
+   * elements that will appear within the game.
+   */
+  public function createGroups() {
+    blockGroup = [];
   }
 
   public function createTest() {
@@ -64,7 +77,14 @@ class Level3D extends Process3D {
   }
 
   public function createEntities() {
-    player = new Player(4, 4);
+    player = new en3d.Player3D(0, 0, 0, root3);
+
+    // base primitive for all blocks
+    var prim = new h3d.prim.Cube();
+    prim.translate(-0.5, -0.5, -0.5);
+    prim.unindex();
+    prim.addNormals();
+    prim.addUVs();
   }
 
   /** TRUE if given coords are in level bounds **/
@@ -78,6 +98,23 @@ class Level3D extends Process3D {
   /** Ask for a level render that will only happen at the end of the current frame. **/
   public inline function invalidate() {
     invalidated = true;
+  }
+
+  // Level Collissions
+
+  /**
+   * Collects the entity that we collided with using the 
+   * 3D grid coordinates to locate them.
+   * @param x 
+   * @param y 
+   * @param z 
+   */
+  public function levelCollided(x:Int, y:Int, z:Int) {
+    return blockGroup.filter((block) -> block.isAlive()
+      && block.cx == x
+      && block.cy == y
+      && block.cz == z)
+      .first();
   }
 
   function render() {
@@ -107,6 +144,11 @@ class Level3D extends Process3D {
   override function onDispose() {
     // Remove all entities
     player.destroy();
+
+    // Destroy blocks
+    for (block in blockGroup) {
+      block.destroy();
+    }
     super.onDispose();
   }
 }

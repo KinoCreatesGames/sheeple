@@ -1,24 +1,37 @@
 package en3d;
 
+import h3d.scene.Object;
+import h3d.prim.Cube;
 import dn.heaps.Controller.ControllerAccess;
 
-class Player extends IsoEntity3D {
+class Player3D extends IsoEntity3D {
   public var ct:ControllerAccess;
 
   public static inline var MOVE_SPD:Int = 1;
 
-  public function new(x:Int, y:Int, z:Int) {
+  public function new(x:Int, y:Int, z:Int, root) {
     super(x, y, z);
     setup();
-    Game.ME.invalidateHud();
+    hud.invalidate();
+    setBody(root);
   }
 
   public function setup() {
     ct = Main.ME.controller.createAccess('player');
-    setSprite();
   }
 
-  public function setSprite() {}
+  public function setBody(root:Object) {
+    var prim = new Cube();
+    prim.translate(-0.5, -0.5, -0.5);
+    prim.unindex();
+    prim.addNormals();
+    prim.addUVs();
+
+    var mesh = new h3d.scene.Mesh(prim, null, root);
+    mesh.material.color.setColor(0xffffff);
+    mesh.material.shadows = false;
+    body = mesh;
+  }
 
   override function update() {
     super.update();
@@ -46,7 +59,26 @@ class Player extends IsoEntity3D {
     }
   }
 
+  /**
+   * Checks if the player can move to that square.
+   * Internally z is handled as it's based on the position
+   * of other blocks in the area.
+   * @param x 
+   * @param y 
+   */
   public function canMove(x:Int = 0, y:Int = 0) {
+    // Blocks
+    var block = level.levelCollided(x, y, cz);
+    var topBlock = level.levelCollided(x, y, cz + 1);
+    // Block at same level  in next cell && one above
+    if (block != null) {
+      if (topBlock != null) {
+        return false;
+      } else {
+        cz += 1;
+        return true;
+      }
+    }
     // Obstacles
     // var obstacle = level.collidedObstacle(x, y);
     // if (obstacle != null) {
