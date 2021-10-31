@@ -1,17 +1,41 @@
 package en3d;
 
+import en3d.blocks.Block;
 import h3d.scene.Object;
 import h3d.prim.Cube;
 import dn.heaps.Controller.ControllerAccess;
 
+enum abstract PState(String) from String to String {
+  var HANG = 'hanging';
+  var STAND = 'standing';
+  var PULL = 'pull';
+  var PUSH = 'push';
+  var FALL = 'fall';
+}
+
+enum abstract BDir(String) from String to String {
+  var LEFT = 'left';
+  var RIGHT = 'right';
+  var DOWN = 'down';
+  var UP = 'up';
+}
+
 class Player3D extends IsoEntity3D {
   public var ct:ControllerAccess;
   public var stepCount:Int = 0;
+  public var pstate:PState;
+  public var blockDir:BDir;
 
   public static inline var MOVE_SPD:Int = 1;
 
+  /**
+   * The current block that is being grabbed currently
+   */
+  public var block:Block;
+
   public function new(x:Int, y:Int, z:Int, root) {
     super(x, y, z);
+    pstate = STAND;
     setup();
     hud.invalidate();
     setBody(root);
@@ -37,7 +61,43 @@ class Player3D extends IsoEntity3D {
   override function update() {
     super.update();
     updateControls();
+    handleCollectibleCollision();
+    handleHanging();
     processFall();
+  }
+
+  public function handleCollectibleCollision() {
+    if (level != null) {
+      var collectible = level.collectibleCollided(cx, cy, cz);
+      if (collectible != null) {
+        var collectibleType = Type.getClass(collectible);
+        switch (collectibleType) {
+          case _:
+            // Kill the collectible
+            collectible.kill(this);
+        }
+      }
+    }
+  }
+
+  public function handleHanging() {
+    var belowBlock = level.levelCollided(cx, cy, cz - 2);
+    // Block at same level  in next cell && one above
+    // check adjacent blocks as well
+    var hasAdjacentBlock = [
+      level.levelCollided(cx - 1, cy, cz),
+      level.levelCollided(cx + 1, cy, cz),
+      level.levelCollided(cx, cy + 1, cz),
+      level.levelCollided(cx, cy - 1, cz)
+    ].exists((el) -> el != null);
+    if (belowBlock == null && hasAdjacentBlock) {
+      // Nothing below you on moving to the next area
+      // Set the user to hang at this point
+
+      pstate = HANG;
+    } else if (belowBlock == null && !hasAdjacentBlock) {
+      pstate = FALL;
+    }
   }
 
   public function processFall() {
@@ -45,7 +105,9 @@ class Player3D extends IsoEntity3D {
     if (belowBlock != null) {
       // do nothing
     } else {
-      cz -= 1; // Fall
+      if (pstate != HANG) {
+        cz -= 1; // Fall
+      }
     }
   }
 
@@ -56,6 +118,36 @@ class Player3D extends IsoEntity3D {
       || ct.upPressed());
 
     if (hasInput) {
+      var tempCX = cx * 1;
+      var tempCY = cy * 1;
+      // Block Push / Pull Button
+      if (ct.aDown()) {
+        // Grab adjacent block for push / pull
+
+        var dirX = getDirX();
+        var dirY = getDirY();
+
+        var adjacentBlock = level.levelCollided(cx + dirX, cy + dirY,
+          cz); // var adjacentBlock = [
+
+        if (ct.leftPressed()) {
+          blockDir = LEFT;
+        } else if (ct.rightPressed()) {
+          blockDir = RIGHT;
+        } else if (ct.downPressed()) {
+          blockDir = DOWN;
+        } else if (ct.upPressed()) {
+          blockDir = UP;
+        }
+        //   level.levelCollided(cx - 1, cy, cz),
+        //   level.levelCollided(cx + 1, cy, cz),
+        //   level.levelCollided(cx, cy + 1, cz),
+        //   level.levelCollided(cx, cy - 1, cz)
+        // ].filter((el) -> el != null).first();
+        if (adjacentBlock != null) {
+          block = adjacentBlock;
+        }
+      }
       if (ct.leftPressed() && canMove(cx - MOVE_SPD, cy)) {
         cx -= MOVE_SPD;
       } else if (ct.rightPressed() && canMove(cx + MOVE_SPD, cy)) {
@@ -67,6 +159,34 @@ class Player3D extends IsoEntity3D {
       } else {
         Game.ME.camera.shakeS(0.5, 1);
       }
+      // Update block
+      if (block != null) {
+        block.cx += cx - tempCX;
+        block.cy += cy - tempCY;
+        block = null;
+      }
+    }
+  }
+
+  public function getDirX() {
+    switch (blockDir) {
+      case LEFT:
+        return -1;
+      case RIGHT:
+        return 1;
+      case _:
+        return 0;
+    }
+  }
+
+  public function getDirY() {
+    switch (blockDir) {
+      case UP:
+        return -1;
+      case DOWN:
+        return 1;
+      case _:
+        return 0;
     }
   }
 
@@ -82,8 +202,7 @@ class Player3D extends IsoEntity3D {
     var block = level.levelCollided(x, y, cz);
     var topBlock = level.levelCollided(x, y, cz + 1);
     // Used for checking if the player should fall later
-    var belowBlock = level.levelCollided(x, y, cz - 1);
-    // Block at same level  in next cell && one above
+
     if (block != null) {
       #if debug
       // trace('collided with block');

@@ -18,4 +18,30 @@ class Block extends IsoEntity3D {
     mesh.material.shadows = false;
     body = mesh;
   }
+
+  override function update() {
+    super.update();
+    if (!cd.has('checkEdges')) {
+      handleEdges();
+    }
+  }
+
+  /**
+   * Causes huge performance dip
+   */
+  public function handleEdges() {
+    var hasAdjacentBlock = [
+      level.levelCollided(cx - 1, cy, cz - 1),
+      level.levelCollided(cx + 1, cy, cz - 1),
+      level.levelCollided(cx, cy + 1, cz - 1),
+      level.levelCollided(cx, cy - 1, cz - 1)
+    ].exists(el -> el != null);
+    var belowBlock = level.levelCollided(cx, cy, cz - 1);
+
+    if (cz != 0 || belowBlock != null || hasAdjacentBlock) {} else {
+      // Fall down
+      cz -= 1;
+    }
+    cd.setF('checkEdges', 120);
+  }
 }

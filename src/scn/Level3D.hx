@@ -90,7 +90,7 @@ class Level3D extends Process3D {
   }
 
   public function createEntities() {
-    player = new en3d.Player3D(0, 0, 6, root3);
+    player = new en3d.Player3D(0, 11, 6, root3);
 
     // base primitive for all blocks
     var prim = new h3d.prim.Cube();
@@ -104,6 +104,16 @@ class Level3D extends Process3D {
       for (i in 0...20) {
         for (y in 0...20) {
           var block = new Block(i, y - z, z);
+          block.setBody(prim, root3);
+          blockGroup.add(block);
+        }
+      }
+    }
+
+    for (z in 5...9) {
+      for (i in 0...10) {
+        for (y in 0...10) {
+          var block = new Block(i, y, z);
           block.setBody(prim, root3);
           blockGroup.add(block);
         }
@@ -138,6 +148,19 @@ class Level3D extends Process3D {
       && block.cx == x
       && block.cy == y
       && block.cz == z)
+      .first();
+  }
+
+  /**
+   * Returns the first collectible that is collided with on the current
+   * level. Only Collides with the ones that are currently alive.
+   * @param x 
+   * @param y 
+   * @param z 
+   */
+  public function collectibleCollided(x:Int, y:Int, z:Int) {
+    return collectibles.members.filter((collectible) -> collectible.isAlive()
+      && collectible.cx == x && collectible.cy == y && collectible.cz == z)
       .first();
   }
 
