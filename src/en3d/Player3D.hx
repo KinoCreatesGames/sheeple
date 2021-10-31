@@ -31,7 +31,7 @@ class Player3D extends IsoEntity3D {
   /**
    * The current block that is being grabbed currently
    */
-  public var block:Block;
+  public var heldBlock:Block;
 
   public function new(x:Int, y:Int, z:Int, root) {
     super(x, y, z);
@@ -115,7 +115,10 @@ class Player3D extends IsoEntity3D {
     var hasInput = (ct.leftPressed()
       || ct.rightPressed()
       || ct.downPressed()
-      || ct.upPressed());
+      || ct.upPressed()
+      || ct.aDown());
+    var xAxis = false;
+    var yAxis = false;
 
     if (hasInput) {
       var tempCX = cx * 1;
@@ -127,9 +130,22 @@ class Player3D extends IsoEntity3D {
         var dirX = getDirX();
         var dirY = getDirY();
 
-        var adjacentBlock = level.levelCollided(cx + dirX, cy + dirY,
-          cz); // var adjacentBlock = [
+        var adjacentBlock = level.levelCollided(cx + dirX, cy + dirY, cz);
+        if (adjacentBlock == null) {
+          adjacentBlock = [
+            level.levelCollided(cx - 1, cy, cz),
+            level.levelCollided(cx + 1, cy, cz),
+            level.levelCollided(cx, cy + 1, cz),
+            level.levelCollided(cx, cy - 1, cz)
+          ].filter((el) -> el != null).first();
+        }
 
+        if (adjacentBlock != null) {
+          heldBlock = adjacentBlock;
+        }
+      }
+
+      if (heldBlock == null) {
         if (ct.leftPressed()) {
           blockDir = LEFT;
         } else if (ct.rightPressed()) {
@@ -138,14 +154,6 @@ class Player3D extends IsoEntity3D {
           blockDir = DOWN;
         } else if (ct.upPressed()) {
           blockDir = UP;
-        }
-        //   level.levelCollided(cx - 1, cy, cz),
-        //   level.levelCollided(cx + 1, cy, cz),
-        //   level.levelCollided(cx, cy + 1, cz),
-        //   level.levelCollided(cx, cy - 1, cz)
-        // ].filter((el) -> el != null).first();
-        if (adjacentBlock != null) {
-          block = adjacentBlock;
         }
       }
       if (ct.leftPressed() && canMove(cx - MOVE_SPD, cy)) {
@@ -159,11 +167,28 @@ class Player3D extends IsoEntity3D {
       } else {
         Game.ME.camera.shakeS(0.5, 1);
       }
-      // Update block
-      if (block != null) {
-        block.cx += cx - tempCX;
-        block.cy += cy - tempCY;
-        block = null;
+      // Update block Pull
+      if (heldBlock != null) {
+        var xAxis = heldBlock.cx == cx;
+        var yAxis = heldBlock.cy == cy;
+        if (yAxis) {
+          if (ct.leftPressed()) {
+            heldBlock.cx -= MOVE_SPD;
+          } else if (ct.rightPressed()) {
+            heldBlock.cx += MOVE_SPD;
+          }
+        }
+        if (xAxis) {
+          if (ct.downPressed()) {
+            heldBlock.cy += MOVE_SPD;
+          } else if (ct.upPressed()) {
+            heldBlock.cy -= MOVE_SPD;
+          }
+        }
+        // block.cx += cx - tempCX;
+        // block.cy += cy - tempCY;
+
+        heldBlock = null;
       }
     }
   }
@@ -201,7 +226,12 @@ class Player3D extends IsoEntity3D {
     // Blocks
     var block = level.levelCollided(x, y, cz);
     var topBlock = level.levelCollided(x, y, cz + 1);
+    var pushBlock = heldBlock;
     // Used for checking if the player should fall later
+
+    if (pushBlock != null && pushBlock.cx == x && pushBlock.cy == y) {
+      return false;
+    }
 
     if (block != null) {
       #if debug

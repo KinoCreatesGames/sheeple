@@ -38,7 +38,7 @@ class Block extends IsoEntity3D {
     ].exists(el -> el != null);
     var belowBlock = level.levelCollided(cx, cy, cz - 1);
 
-    if (cz != 0 || belowBlock != null || hasAdjacentBlock) {} else {
+    if (cz == 0 || belowBlock != null || hasAdjacentBlock) {} else {
       // Fall down
       cz -= 1;
     }
