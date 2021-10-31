@@ -86,14 +86,14 @@ class Player3D extends IsoEntity3D {
     // Block at same level  in next cell && one above
     if (block != null) {
       #if debug
-      trace('collided with block');
+      // trace('collided with block');
       #else
       #end
       if (topBlock != null) {
         return false;
       } else {
         #if debug
-        trace('collided with free space');
+        // trace('collided with free space');
         #else
         #end
         cz += 1;
