@@ -4,7 +4,7 @@ import h3d.scene.Mesh;
 import h3d.prim.Primitive;
 import h3d.scene.Object;
 
-class Mystery extends Block {
+class MysteryBlock extends Block {
   override function setBody(prim:Primitive, root:Object) {
     super.setBody(prim, root);
     var mesh:Mesh = cast body;
