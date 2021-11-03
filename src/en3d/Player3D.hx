@@ -60,10 +60,17 @@ class Player3D extends IsoEntity3D {
 
   override function update() {
     super.update();
+    handleUndo();
     updateControls();
     handleCollectibleCollision();
     handleHanging();
     processFall();
+  }
+
+  public function handleUndo() {
+    if (level != null && ct.bPressed()) {
+      level.triggerUndo();
+    }
   }
 
   public function handleCollectibleCollision() {
@@ -171,19 +178,27 @@ class Player3D extends IsoEntity3D {
       if (heldBlock != null) {
         var xAxis = heldBlock.cx == cx;
         var yAxis = heldBlock.cy == cy;
+        var movedBlock = false;
         if (yAxis) {
           if (ct.leftPressed()) {
             heldBlock.cx -= MOVE_SPD;
+            movedBlock = true;
           } else if (ct.rightPressed()) {
             heldBlock.cx += MOVE_SPD;
+            movedBlock = true;
           }
         }
         if (xAxis) {
           if (ct.downPressed()) {
             heldBlock.cy += MOVE_SPD;
+            movedBlock = true;
           } else if (ct.upPressed()) {
             heldBlock.cy -= MOVE_SPD;
+            movedBlock = true;
           }
+        }
+        if (movedBlock && level != null) {
+          level.pushState();
         }
         // block.cx += cx - tempCX;
         // block.cy += cy - tempCY;

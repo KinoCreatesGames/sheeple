@@ -30,6 +30,15 @@ class Player extends IsoEntity {
   override function update() {
     super.update();
     updateControls();
+    updateUndo();
+  }
+
+  public function updateUndo() {
+    if (level != null) {
+      if (ct.bPressed()) {
+        level.triggerUndo();
+      }
+    }
   }
 
   public function updateControls() {

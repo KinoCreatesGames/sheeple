@@ -1,5 +1,7 @@
 package scn;
 
+import h3d.Vector;
+import GameTypes.LvlState;
 import en3d.collectibles.Collectible;
 import en3d.blocks.Block;
 import en3d.Player3D;
@@ -37,6 +39,12 @@ class Level3D extends Process3D {
   public var collectibles:Group<Collectible>;
 
   /**
+   * Stack used for holding all of the level information.
+   * Maximum size of 10.
+   */
+  public var stateStack:Array<LvlState>;
+
+  /**
    * Score for the current level.
    * Gets updated as time goes on during the level.
    * Initialized at 0.
@@ -61,6 +69,7 @@ class Level3D extends Process3D {
    * elements that will appear within the game.
    */
   public function createGroups() {
+    stateStack = [];
     blockGroup = new Group<Block>();
     collectibles = new Group<Collectible>();
   }
@@ -177,6 +186,45 @@ class Level3D extends Process3D {
     //       g.beginFill(Color.randomColor(rnd(0, 1), 0.5, 0.4));
     //     g.drawRect(cx * Const.GRID, cy * Const.GRID, Const.GRID, Const.GRID);
     //   }
+  }
+
+  /**
+   * Triggers an undo within the game
+   * and puts you back to the last state of the game
+   * that we have access to.
+   */
+  public function triggerUndo() {
+    var oldState = stateStack.pop();
+    // Update all positions after getting previous state
+    if (oldState != null) {
+      var oldP = oldState.playerPos;
+      player.cx = Std.int(oldP.x);
+      player.cy = Std.int(oldP.y);
+      player.cz = Std.int(oldP.z);
+
+      // Update the position of all the blocks to their
+      // previous versions
+      for (i in 0...oldState.blockPositions.length) {
+        var block = blockGroup.members[i];
+        var bPos = oldState.blockPositions[i];
+        block.cx = Std.int(bPos.x);
+        block.cy = Std.int(bPos.y);
+        block.cz = Std.int(bPos.z);
+      }
+    }
+  }
+
+  /**
+   * Creates a new state when the player makes 
+   * some move within the game.
+   */
+  public function pushState() {
+    var state:LvlState = {
+      playerPos: new Vector(player.cx, player.cy, player.cz),
+      blockPositions: blockGroup.members.map((block) -> new Vector(block.cx,
+        block.cy, block.cz))
+    }
+    stateStack.push(state);
   }
 
   override function update() {
