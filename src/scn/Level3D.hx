@@ -38,6 +38,12 @@ class Level3D extends Process3D {
   public var blockGroup:Group<Block>;
   public var collectibles:Group<Collectible>;
 
+  public var camera(get, never):h3d.Camera;
+
+  public inline function get_camera() {
+    return Boot.ME.s3d.camera;
+  }
+
   /**
    * Stack used for holding all of the level information.
    * Maximum size of 10.
@@ -59,6 +65,12 @@ class Level3D extends Process3D {
     createTest();
     createGroups();
     createEntities();
+
+    // Update Camera
+    camera.target.set(player.body.x, player.body.y, player.body.z);
+    camera.pos.set(20, 30, 30);
+    camera.zNear = 1;
+    camera.zFar = 50;
 
     // On level Creation setup camera controller
     new h3d.scene.CameraController(null, root3).loadFromCamera();
