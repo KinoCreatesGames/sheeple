@@ -10,4 +10,18 @@ class Spike extends Block {
     var mesh:Mesh = cast body;
     mesh.material.color.setColor(0xaa0000);
   }
+
+  public function startSpike() {
+    cd.setS('spikeActivate', 0.5, () -> {
+      if (level != null) {
+        if (level.player != null) {
+          var player = level.player;
+          if (player.cx == cx && player.cy == cy && player.cz == (cz + 1)) {
+            // Kill them
+            player.kill(this);
+          }
+        }
+      }
+    });
+  }
 }

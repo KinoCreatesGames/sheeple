@@ -1,5 +1,10 @@
 package en3d;
 
+import en3d.blocks.Spike;
+import en3d.blocks.BlackHole;
+import en3d.blocks.Bounce;
+import en3d.blocks.IceBlock;
+import en3d.blocks.Goal;
 import en3d.blocks.Block;
 import h3d.scene.Object;
 import h3d.prim.Cube;
@@ -27,6 +32,7 @@ class Player3D extends IsoEntity3D {
   public var blockDir:BDir;
 
   public static inline var MOVE_SPD:Int = 1;
+  public static inline var BOUNCE_HEIGHT:Int = 4;
 
   /**
    * The current block that is being grabbed currently
@@ -62,6 +68,7 @@ class Player3D extends IsoEntity3D {
     super.update();
     handleUndo();
     updateControls();
+    handleBlockCollision();
     handleCollectibleCollision();
     handleHanging();
     processFall();
@@ -70,6 +77,35 @@ class Player3D extends IsoEntity3D {
   public function handleUndo() {
     if (level != null && ct.bPressed()) {
       level.triggerUndo();
+    }
+  }
+
+  public function handleBlockCollision() {
+    if (level != null) {
+      // Handle collided with certain blocks
+      var block = level.levelCollided(cx, cy, cz);
+      if (block != null) {
+        var blockType = Type.getClass(block);
+        switch (blockType) {
+          case Goal:
+            level.completeLevel();
+          case IceBlock:
+          // Player will slip and
+          // continue moving in the current direction
+          case Bounce:
+            // Start  player bouncing by adding velocity
+            this.cz += BOUNCE_HEIGHT;
+          case BlackHole:
+            // Delete the player aka kill the player
+            this.kill(block);
+          case Spike:
+            // Start spike activation
+            var spike:Spike = cast block;
+            spike.startSpike();
+          case _:
+            // Do nothing
+        }
+      }
     }
   }
 

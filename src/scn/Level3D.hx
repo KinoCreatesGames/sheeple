@@ -228,7 +228,8 @@ class Level3D extends Process3D {
 
   /**
    * Creates a new state when the player makes 
-   * some move within the game.
+   * some move within the game. Pushes the latest
+   * state into the state stack.
    */
   public function pushState() {
     var state:LvlState = {
@@ -238,6 +239,12 @@ class Level3D extends Process3D {
     }
     stateStack.push(state);
   }
+
+  /**
+   * Marks the level as complete and starts the level complete
+   * transition.
+   */
+  public function completeLevel() {}
 
   override function update() {
     super.update();
