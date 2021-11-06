@@ -248,7 +248,18 @@ class Level3D extends Process3D {
 
   override function update() {
     super.update();
+    handlePause();
     handleGameOver();
+  }
+
+  public function handlePause() {
+    // Pause
+    if (Game.ME.ca.isKeyboardPressed(K.ESCAPE)) {
+      // hxd.Res.sound.pause_in.play(); - issue playing sound now
+      // bgm.pause = true;
+      Game.ME.pause();
+      new Pause();
+    }
   }
 
   public function handleGameOver() {

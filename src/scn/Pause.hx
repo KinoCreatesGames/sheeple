@@ -19,10 +19,12 @@ class Pause extends dn.Process {
     super(Game.ME);
     ct = Main.ME.controller.createAccess('pause');
     createRootInLayers(Game.ME.root, Const.DP_UI);
+    root.filter = new h2d.filter.ColorMatrix();
     mask = new h2d.Bitmap(h2d.Tile.fromColor(0x0, 1, 1, 0.6), root);
     root.under(mask);
     elapsed = 0;
     setupPause();
+    dn.Process.resizeAll();
   }
 
   public function setupPause() {
@@ -45,11 +47,13 @@ class Pause extends dn.Process {
 
     // Add Buttons
     var resume = new TxtBtn(win.outerWidth, Lang.t._('Resume'), win);
+    resume.text.center();
     resume.onClick = (event) -> {
       resumeGame();
     }
 
     var quit = new TxtBtn(win.outerWidth, Lang.t._('To Title'), win);
+    quit.text.center();
     quit.onClick = (event) -> {
       toTitle();
     }
@@ -57,13 +61,14 @@ class Pause extends dn.Process {
 
   public function resumeGame() {
     Game.ME.resume();
-    se = hxd.Res.sound.pause_out.play();
+    // se = hxd.Res.sound.pause_out.play();
     this.destroy();
   }
 
   public function toTitle() {
+    Game.ME.resume();
     Game.ME.level.destroy();
-    se = hxd.Res.sound.pause_out.play();
+    // se = hxd.Res.sound.pause_out.play();
     this.destroy();
     new Title();
   }
@@ -92,7 +97,7 @@ class Pause extends dn.Process {
       mask.scaleX = w;
       mask.scaleY = h;
     }
-    win.x = (w() * 0.5 - (win.outerWidth * 0.5));
+    win.x = (w() * 0.5 - (win.outerWidth * 0.0));
     win.y = (h() * 0.5 - (win.outerHeight * 0.5));
   }
 

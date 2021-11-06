@@ -85,14 +85,14 @@ class Title extends dn.Process {
       if (bgm != null) {
         bgm.stop();
       }
-      hxd.Res.sound.confirm.play();
+      // hxd.Res.sound.confirm.play();
       // this.destroy();
       complete = true;
     }
     ngInt.onOver = (event) -> {
       newGame.alpha = 0.5;
       // Trigger sound
-      hxd.Res.sound.select.play();
+      // hxd.Res.sound.select.play();
     }
     ngInt.onOut = (event) -> {
       newGame.alpha = 1;
@@ -133,7 +133,7 @@ class Title extends dn.Process {
     crInt.x = credits.getSize().xMin;
     crInt.onOver = (event) -> {
       credits.alpha = 0.5;
-      hxd.Res.sound.select.play();
+      // hxd.Res.sound.select.play();
     }
     crInt.onOut = (event) -> {
       credits.alpha = 1;
@@ -144,7 +144,7 @@ class Title extends dn.Process {
       if (bgm != null) {
         bgm.stop();
       }
-      hxd.Res.sound.confirm.play();
+      // hxd.Res.sound.confirm.play();
       this.destroy();
       new Credits();
     }
@@ -160,13 +160,13 @@ class Title extends dn.Process {
       if (bgm != null) {
         bgm.stop();
       }
-      hxd.Res.sound.confirm.play();
+      // hxd.Res.sound.confirm.play();
       this.destroy();
       hxd.System.exit();
     }
     exitInt.onOver = (event) -> {
       exit.alpha = 0.5;
-      hxd.Res.sound.select.play();
+      // hxd.Res.sound.select.play();
     }
     exitInt.onOut = (event) -> {
       exit.alpha = 1;

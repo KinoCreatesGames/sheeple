@@ -17,6 +17,10 @@ class TxtBtn extends BaseBtn {
     text = new h2d.Text(Assets.fontMedium, this);
     setColor();
     text.text = str;
+    if (height == 0) {
+      // Update the interactive height to the text height
+      int.height = text.textHeight;
+    }
     setupEvents();
   }
 
