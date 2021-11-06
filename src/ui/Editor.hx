@@ -71,6 +71,8 @@ class Editor extends dn.Process {
     menuBar.layout = Horizontal;
     menuBar.horizontalSpacing = 12;
     menuBar.padding = 8;
+    menuBar.backgroundTile = h2d.Tile.fromColor(0x0, 1, 1, 0.8);
+    menuBar.minWidth = w();
     //File Option
     var file = new TxtBtn(24, Lang.t._('File'), menuBar);
     file.onClick = (event) -> {
@@ -94,6 +96,8 @@ class Editor extends dn.Process {
 
   public function setupBlockPanel() {
     blockPanel = new h2d.Flow(flow);
+    blockPanel.minHeight = Std.int(h() * 0.3);
+    blockPanel.backgroundTile = h2d.Tile.fromColor(0x0, 1, 1, 0.8);
     //Title
     var title = new h2d.Text(Assets.fontMedium, blockPanel);
     title.text = Lang.t._('Blocks');
@@ -107,6 +111,8 @@ class Editor extends dn.Process {
 
   public function setupCollectiblePanel() {
      collectiblePanel = new h2d.Flow(flow);
+     collectiblePanel.minHeight = Std.int(h() * 0.3);
+    collectiblePanel.backgroundTile = h2d.Tile.fromColor(0x0, 1, 1, 0.8); 
     //Title
     var title = new h2d.Text(Assets.fontMedium, collectiblePanel);
     title.text = Lang.t._('Collectibles');
@@ -117,6 +123,23 @@ class Editor extends dn.Process {
   public inline function invalidate() {
     invalidated = true;
   }
+
+
+  override function update() {
+    super.update();
+    if(invalidated) {
+      flow.reflow();
+      render();
+      invalidated = false;
+    }
+  }
+
+
+/**
+ * Renders anything that needs to be redrawn within the game.
+ */
+public function render() {
+}
 
   public function startEditor() {
     ct.takeExclusivity();
