@@ -242,8 +242,10 @@ class Game extends dn.Process {
         hxd.System.exit();
       #end
 
-      // Restart
-      if (ca.selectPressed()) Main.ME.startGame();
+      // Quick restart
+      if (ca.selectPressed()) {
+        reloadCurrentLevel();
+      }
     }
   }
 }

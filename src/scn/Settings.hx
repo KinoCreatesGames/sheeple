@@ -125,7 +125,7 @@ class Settings extends dn.Process {
   override function onResize() {
     super.onResize();
     // Resize all elements to be centered on screen
-    win.x = (w() * 0.5 - (win.outerWidth * 0.5));
+    win.x = (w() * 0.5 - (win.outerWidth * 0.0));
     win.y = (h() * 0.5 - (win.outerHeight * 0.5));
   }
 
