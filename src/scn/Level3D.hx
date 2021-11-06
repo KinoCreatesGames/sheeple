@@ -257,7 +257,7 @@ class Level3D extends Process3D {
     if (Game.ME.ca.isKeyboardPressed(K.ESCAPE)) {
       // hxd.Res.sound.pause_in.play(); - issue playing sound now
       // bgm.pause = true;
-      Game.ME.pause();
+      this.pause();
       new Pause();
     }
   }

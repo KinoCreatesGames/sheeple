@@ -18,6 +18,7 @@ class Pause extends dn.Process {
   public function new() {
     super(Game.ME);
     ct = Main.ME.controller.createAccess('pause');
+    ct.takeExclusivity();
     createRootInLayers(Game.ME.root, Const.DP_UI);
     root.filter = new h2d.filter.ColorMatrix();
     mask = new h2d.Bitmap(h2d.Tile.fromColor(0x0, 1, 1, 0.6), root);
@@ -60,13 +61,16 @@ class Pause extends dn.Process {
   }
 
   public function resumeGame() {
-    Game.ME.resume();
+    trace('Hit button');
+    ct.releaseExclusivity();
+    Game.ME.level.resume();
     // se = hxd.Res.sound.pause_out.play();
     this.destroy();
   }
 
   public function toTitle() {
-    Game.ME.resume();
+    ct.releaseExclusivity();
+    Game.ME.level.resume();
     Game.ME.level.destroy();
     // se = hxd.Res.sound.pause_out.play();
     this.destroy();
