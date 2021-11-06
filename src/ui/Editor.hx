@@ -1,9 +1,11 @@
 package ui;
 
+import h2d.Flow.FlowAlign;
+import h2d.Flow.FlowOverflow;
 import GameTypes.BlockType;
+import GameTypes.CollectibleTypes;
 import h3d.Vector;
 import dn.heaps.filter.PixelOutline;
-import en3d.blocks.Block;
 import ui.cmp.TxtBtn;
 import scn.Level3D;
 
@@ -55,6 +57,12 @@ class Editor extends dn.Process {
    */
   public var currentBlockType:String;
 
+  /**
+   * the current type of collectible selected
+   * within the game.
+   */
+  public var currentCollectibleType:String;
+
   public function new() {
     super(Game.ME);
      ct = Main.ME.controller.createAccess('pause');
@@ -88,6 +96,7 @@ class Editor extends dn.Process {
     menuBar.horizontalSpacing = 12;
     menuBar.padding = 8;
     menuBar.backgroundTile = h2d.Tile.fromColor(0x0, 1, 1, 0.8);
+    menuBar.filter = new PixelOutline(0xffffff, 1);  
     menuBar.minWidth = w();
     //File Option
     var file = new TxtBtn(24, Lang.t._('File'), menuBar);
@@ -111,13 +120,21 @@ class Editor extends dn.Process {
   }
 
   public function setupBlockPanel() {
-    blockPanel = new h2d.Flow(flow);
+    var blockPanelTitle = new h2d.Flow(flow);
+    blockPanelTitle.backgroundTile = h2d.Tile.fromColor(0x0, 1, 1, 0.8);
+    blockPanelTitle.filter = new PixelOutline(0xffffff, 1);  
+    blockPanelTitle.minWidth = Std.int(w() * 0.25);
+    blockPanelTitle.horizontalAlign = FlowAlign.Middle;
+    //Panel
+    blockPanel = new h2d.Flow(flow); 
     blockPanel.minWidth = Std.int(w() * 0.25);
-    blockPanel.minHeight = Std.int(h() * 0.3);
+    blockPanel.maxHeight = Std.int(h() * 0.3);
     blockPanel.backgroundTile = h2d.Tile.fromColor(0x0, 1, 1, 0.8);
     blockPanel.filter = new PixelOutline(0xffffff, 1);  
+    blockPanel.layout = Vertical;
+    blockPanel.overflow = FlowOverflow.Scroll;
     //Title
-    var title = new h2d.Text(Assets.fontMedium, blockPanel);
+    var title = new h2d.Text(Assets.fontMedium, blockPanelTitle);
     title.text = Lang.t._('Blocks');
     title.textColor = 0xffffff;
     //Block List
@@ -125,20 +142,49 @@ class Editor extends dn.Process {
   }
 
   public function addBlockTypes() {
+    var types = [BlockB, BounceB, IceB, StaticB, GoalB, SpikeB, BlackHoleB, HeavyB, MysteryB, CrackedB];
+
+    for(blocktype in types) {
+       var btn = new TxtBtn(blocktype, blockPanel);
+      btn.onClick = (event) -> {
+        currentBlockType = blocktype;
+      }; 
+    }
   }
 
   public function setupCollectiblePanel() {
+     var cPanelTitle = new h2d.Flow(flow);
+    cPanelTitle.backgroundTile = h2d.Tile.fromColor(0x0, 1, 1, 0.8);
+    cPanelTitle.filter = new PixelOutline(0xffffff, 1);  
+    cPanelTitle.minWidth = Std.int(w() * 0.25);
+    cPanelTitle.horizontalAlign = FlowAlign.Middle;
+
      collectiblePanel = new h2d.Flow(flow);
      collectiblePanel.minWidth = Std.int(w() * 0.25);
      collectiblePanel.minHeight = Std.int(h() * 0.3);
      collectiblePanel.backgroundTile = h2d.Tile.fromColor(0x0, 1, 1, 0.8); 
      collectiblePanel.filter = new PixelOutline(0xffffff, 1);
+     collectiblePanel.layout = Vertical;
+     collectiblePanel.overflow = FlowOverflow.Scroll;
     //Title
-    var title = new h2d.Text(Assets.fontMedium, collectiblePanel);
+    var title = new h2d.Text(Assets.fontMedium, cPanelTitle);
     title.text = Lang.t._('Collectibles');
     title.textColor = 0xffffff;
     //Collectible List
+    addCollectibleTypes();
   }
+
+  public function addCollectibleTypes() {
+    var types = [BambooR, JLife, JetPack];
+
+    for(collectible in types) {
+       var btn = new TxtBtn(collectible, collectiblePanel);
+      btn.onClick = (event) -> {
+        currentCollectibleType = collectible;
+      }; 
+    }
+  }
+
 
   public inline function invalidate() {
     invalidated = true;
@@ -174,7 +220,7 @@ class Editor extends dn.Process {
     var down = ct.downPressed();
     var action = ct.aPressed();
     var delete = ct.isKeyboardPressed(K.DELETE);
-    var hasInput = [left, right, up, down, action].exists((el) -> el  );
+    var hasInput = [left, right, up, down, action, delete].exists((el) -> el  );
 
     if (hasInput) {
       //Move the block placement
@@ -196,7 +242,7 @@ class Editor extends dn.Process {
       } else if (action) { 
         var lvlBlock = level.levelCollided(Std.int(plCursor.x), Std.int(plCursor.y), Std.int(plCursor.z));
         if (lvlBlock == null) {
-          level.createBlock(Std.int(plCursor.x), Std.int(plCursor.y), Std.int(plCursor.z));
+          level.createBlock(currentBlockType,Std.int(plCursor.x), Std.int(plCursor.y), Std.int(plCursor.z));
         }
       } else if (delete) {
          var lvlBlock = level.levelCollided(Std.int(plCursor.x), Std.int(plCursor.y), Std.int(plCursor.z));

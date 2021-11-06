@@ -22,3 +22,9 @@ enum abstract BlockType(String) from String to String {
   var BlackHoleB:String = 'BlackHoleBlock';
   var HeavyB:String = 'HeavyBlock';
 }
+
+enum abstract CollectibleTypes(String) from String to String {
+  var BambooR = 'BambooRockets';
+  var JLife = 'Life';
+  var JetPack = 'JetPack';
+}
