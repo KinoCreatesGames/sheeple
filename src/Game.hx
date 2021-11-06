@@ -33,6 +33,11 @@ class Game extends dn.Process {
   public var hud:ui.Hud;
 
   /**
+   * Block Editor UI
+   */
+  public var editor:ui.Editor;
+
+  /**
    * Player lives, defaults to 3 and is incremented.
    */
   public var playerLives:Int = 3;
@@ -57,6 +62,8 @@ class Game extends dn.Process {
     fx = new Fx();
     hud = new ui.Hud();
     hud.hide();
+    editor = new ui.Editor();
+    editor.hide();
 
     startInitialGame();
     Process.resizeAll();
@@ -81,6 +88,17 @@ class Game extends dn.Process {
     if (!hud.destroyed) {
       hud.invalidate();
     }
+  }
+
+  public inline function invalidateEditor() {
+    if (!editor.destroyed) {
+      editor.invalidate();
+    }
+  }
+
+  // Editor Controls
+  public inline function showEditor() {
+    editor.startEditor();
   }
 
   /** CDB file changed on disk**/

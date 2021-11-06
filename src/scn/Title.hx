@@ -50,7 +50,7 @@ class Title extends dn.Process {
 
   public function setupTitle() {
     title = new h2d.Text(Assets.fontLarge, root);
-    title.text = Lang.t._('Distactia');
+    title.text = Lang.t._('Sheeple');
     title.textColor = 0xffffff;
     setupTitleWindow();
   }
