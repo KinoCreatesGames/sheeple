@@ -8,7 +8,7 @@
 		}
 	},
   "whitespace": {
-    
+    "ifPolicy": "around",
     "arrowFunctionsPolicy": "around",
     "functionTypeHaxe3Policy": "around",
     "functionTypeHaxe4Policy": "around"

@@ -1,14 +1,12 @@
 package scn;
 
-import h3d.scene.Mesh;
+import GameTypes.BlockType;
 import h3d.prim.Cube;
-import h3d.prim.Primitive;
 import h3d.scene.Scene;
 import h3d.Vector;
 import GameTypes.LvlState;
 import en3d.collectibles.Collectible;
 import en3d.blocks.Block;
-import en3d.Player3D;
 
 class Level3D extends Process3D {
   /** Level grid-based width**/
@@ -55,7 +53,6 @@ class Level3D extends Process3D {
   public var camera(get, never):h3d.Camera;
 
   // TODO: Add plane for the levels
-
   public inline function get_camera() {
     return Boot.ME.s3d.camera;
   }
@@ -155,7 +152,6 @@ class Level3D extends Process3D {
 
     // set the ambient light to 30%
     // s3d.lightSystem.ambientLight.set(0.3, 0.3, 0.3);
-
     // Boot.ME.s3d.lightSystem..set(0.3, 0.3, 0.3);
   }
 
@@ -191,7 +187,7 @@ class Level3D extends Process3D {
     }
   }
 
-  public function createBlock(x:Int, y:Int, z:Int) {
+  public function createBlock(blockType:BlockType, x:Int, y:Int, z:Int) {
     var block = new Block(x, y, z);
     block.setBody(blockPrim, root3);
     block.body.toMesh().material.color.setColor(0xaa00aa);
@@ -210,8 +206,6 @@ class Level3D extends Process3D {
   public inline function invalidate() {
     invalidated = true;
   }
-
-  // Level Collissions
 
   /**
    * Collects the entity that we collided with using the 
@@ -322,7 +316,6 @@ class Level3D extends Process3D {
       // trace(eBlockAlpha);
       var material = editorBlock.body.toMesh().material;
       // Blend mode needs to be applied for the alpha channel to be used.
-
       material.color.set(material.color.x, material.color.y, material.color.z,
         eBlockAlpha);
     }

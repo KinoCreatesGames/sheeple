@@ -1,11 +1,12 @@
 package ui;
 
+import GameTypes.BlockType;
 import h3d.Vector;
 import dn.heaps.filter.PixelOutline;
 import en3d.blocks.Block;
 import ui.cmp.TxtBtn;
 import scn.Level3D;
-import h2d.Flow.FlowAlign;
+
 
 class Editor extends dn.Process {
   public var game(get, never):Game;
@@ -47,18 +48,18 @@ class Editor extends dn.Process {
 
   public static inline var MOVE_SPD:Int = 1;
 
-
   /**
    * The type of block that is currently
    * selected within the editor for use
    * of placing blocks on the screen.
    */
-  public var currentBlockType:Null<Block>;
+  public var currentBlockType:String;
 
   public function new() {
     super(Game.ME);
      ct = Main.ME.controller.createAccess('pause');
     createRootInLayers(game.root, Const.DP_UI);
+    currentBlockType = BlockType.BlockB;
     //Pixel Perfect Rendering
     root.filter = new h2d.filter.ColorMatrix();
 
@@ -154,7 +155,7 @@ class Editor extends dn.Process {
       invalidated = false;
     }
 
-   if (!cd.has('mouse Test') && flow.visible) {
+    if (!cd.has('mouse Test') && flow.visible) {
       cd.setS('mouse Test', 2, () -> {
         
         // trace('Mouse Pos ${win.mouseX}, ${win.mouseY}'); 
@@ -172,7 +173,8 @@ class Editor extends dn.Process {
     var up = ct.upPressed(); 
     var down = ct.downPressed();
     var action = ct.aPressed();
-    var hasInput = [left, right, up, down, action].exists((el) -> el == true);
+    var delete = ct.isKeyboardPressed(K.DELETE);
+    var hasInput = [left, right, up, down, action].exists((el) -> el  );
 
     if (hasInput) {
       //Move the block placement
@@ -192,7 +194,15 @@ class Editor extends dn.Process {
       } else if (down) {
         plCursor.y += MOVE_SPD;
       } else if (action) { 
-        level.createBlock(Std.int(plCursor.x), Std.int(plCursor.y), Std.int(plCursor.z));
+        var lvlBlock = level.levelCollided(Std.int(plCursor.x), Std.int(plCursor.y), Std.int(plCursor.z));
+        if (lvlBlock == null) {
+          level.createBlock(Std.int(plCursor.x), Std.int(plCursor.y), Std.int(plCursor.z));
+        }
+      } else if (delete) {
+         var lvlBlock = level.levelCollided(Std.int(plCursor.x), Std.int(plCursor.y), Std.int(plCursor.z));
+         if (lvlBlock != null) {
+           lvlBlock.destroy();
+         }
       }
       level.editorBlock.cx = Std.int(plCursor.x); 
       level.editorBlock.cy = Std.int(plCursor.y); 
@@ -200,12 +210,12 @@ class Editor extends dn.Process {
     }
   }
 
-/**
- * Renders anything that needs to be redrawn within the game.
- */
-public function render() {
+  /**
+  * Renders anything that needs to be redrawn within the game.
+  */
+  public function render() {
 
-}
+  }
 
   public function startEditor() {
     ct.takeExclusivity();
