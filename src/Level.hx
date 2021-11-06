@@ -1,3 +1,4 @@
+import h3d.scene.Scene;
 import en.Player;
 
 class Level extends dn.Process {

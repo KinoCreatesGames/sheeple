@@ -1,5 +1,7 @@
 package ui;
 
+import h3d.Vector;
+import dn.heaps.filter.PixelOutline;
 import en3d.blocks.Block;
 import ui.cmp.TxtBtn;
 import scn.Level3D;
@@ -18,13 +20,19 @@ class Editor extends dn.Process {
     return Game.ME.level;
   }
 
+  public var win(get, never):hxd.Window; 
+
+  public inline function get_win() {
+    return hxd.Window.getInstance();
+  } 
+
   //Controller access
    var ct:dn.heaps.Controller.ControllerAccess;
 
   /**
    * Outer flow for the Editor Elements.
    */
-  var flow:h2d.Flow;
+  public var flow:h2d.Flow;
 
   var menuBar:h2d.Flow;
   var blockPanel:h2d.Flow;
@@ -32,6 +40,12 @@ class Editor extends dn.Process {
 
   var invalidated:Bool = true;
 
+  /**
+   * The Vector Position of the block placement coordinates.
+   */
+  public var plCursor:h3d.Vector;
+
+  public static inline var MOVE_SPD:Int = 1;
 
 
   /**
@@ -59,6 +73,7 @@ class Editor extends dn.Process {
     flow.borderWidth = 7;
     flow.minWidth = w();
     flow.layout = Vertical;
+    plCursor = new Vector(0, 0, 0 );
 
     currentBlockType = null;
     setupMenuBar();
@@ -96,8 +111,10 @@ class Editor extends dn.Process {
 
   public function setupBlockPanel() {
     blockPanel = new h2d.Flow(flow);
+    blockPanel.minWidth = Std.int(w() * 0.25);
     blockPanel.minHeight = Std.int(h() * 0.3);
     blockPanel.backgroundTile = h2d.Tile.fromColor(0x0, 1, 1, 0.8);
+    blockPanel.filter = new PixelOutline(0xffffff, 1);  
     //Title
     var title = new h2d.Text(Assets.fontMedium, blockPanel);
     title.text = Lang.t._('Blocks');
@@ -111,8 +128,10 @@ class Editor extends dn.Process {
 
   public function setupCollectiblePanel() {
      collectiblePanel = new h2d.Flow(flow);
+     collectiblePanel.minWidth = Std.int(w() * 0.25);
      collectiblePanel.minHeight = Std.int(h() * 0.3);
-    collectiblePanel.backgroundTile = h2d.Tile.fromColor(0x0, 1, 1, 0.8); 
+     collectiblePanel.backgroundTile = h2d.Tile.fromColor(0x0, 1, 1, 0.8); 
+     collectiblePanel.filter = new PixelOutline(0xffffff, 1);
     //Title
     var title = new h2d.Text(Assets.fontMedium, collectiblePanel);
     title.text = Lang.t._('Collectibles');
@@ -124,32 +143,81 @@ class Editor extends dn.Process {
     invalidated = true;
   }
 
-
   override function update() {
     super.update();
-    if(invalidated) {
+    if (flow.visible) {
+      handleControls();
+    } 
+    if (invalidated) {
       flow.reflow();
       render();
       invalidated = false;
     }
+
+   if (!cd.has('mouse Test') && flow.visible) {
+      cd.setS('mouse Test', 2, () -> {
+        
+        // trace('Mouse Pos ${win.mouseX}, ${win.mouseY}'); 
+        //unproject transforms 2D screen position into a 3d one.
+        var ray = level.s3d.camera.rayFromScreen(win.mouseX, win.mouseY);
+        // trace(ray.collide(level.player.body.getBounds()));
+        // trace(level.s3d.camera.unproject(win.mouseX, win.mouseY, level.camera.pos.z));
+      });
+    } 
   }
 
+  public function handleControls() {
+    var left = ct.leftPressed();
+    var right = ct.rightPressed();
+    var up = ct.upPressed(); 
+    var down = ct.downPressed();
+    var action = ct.aPressed();
+    var hasInput = [left, right, up, down, action].exists((el) -> el == true);
+
+    if (hasInput) {
+      //Move the block placement
+      if (left) {
+        plCursor.x -= MOVE_SPD;
+      }
+      else if (right) {
+        plCursor.x  += MOVE_SPD;
+      } else if (ct.xDown() && up) {
+        plCursor.z += MOVE_SPD;
+      }
+      else if (ct.xDown() && down) {
+        plCursor.z -= MOVE_SPD;
+      }
+       else if (up) {
+        plCursor.y -= MOVE_SPD;
+      } else if (down) {
+        plCursor.y += MOVE_SPD;
+      } else if (action) { 
+        level.createBlock(Std.int(plCursor.x), Std.int(plCursor.y), Std.int(plCursor.z));
+      }
+      level.editorBlock.cx = Std.int(plCursor.x); 
+      level.editorBlock.cy = Std.int(plCursor.y); 
+      level.editorBlock.cz = Std.int(plCursor.z);
+    }
+  }
 
 /**
  * Renders anything that needs to be redrawn within the game.
  */
 public function render() {
+
 }
 
   public function startEditor() {
     ct.takeExclusivity();
     show();
+    level.editorBlock.body.visible = true;
     invalidate();
   }
 
   public function exitEditor() {
     ct.releaseExclusivity();
     hide();
+    level.editorBlock.body.visible = false;
     if (game.level != null) {
       game.level.resume();
     }

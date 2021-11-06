@@ -1,5 +1,9 @@
 package scn;
 
+import h3d.scene.Mesh;
+import h3d.prim.Cube;
+import h3d.prim.Primitive;
+import h3d.scene.Scene;
 import h3d.Vector;
 import GameTypes.LvlState;
 import en3d.collectibles.Collectible;
@@ -31,6 +35,16 @@ class Level3D extends Process3D {
   inline function get_pxHei()
     return cHei * Const.GRID;
 
+  /**
+   * The default scene object
+   * within the Heaps application.
+   */
+  public var s3d(get, never):Scene;
+
+  public inline function get_s3d() {
+    return Boot.ME.s3d;
+  }
+
   var invalidated = true;
 
   public var player:en3d.Player3D;
@@ -39,6 +53,8 @@ class Level3D extends Process3D {
   public var collectibles:Group<Collectible>;
 
   public var camera(get, never):h3d.Camera;
+
+  // TODO: Add plane for the levels
 
   public inline function get_camera() {
     return Boot.ME.s3d.camera;
@@ -57,13 +73,33 @@ class Level3D extends Process3D {
    */
   public var score:Int = 0;
 
+  public var blockPrim:Cube;
+
+  /**
+   * A Cube mesh for showing where the 
+   * selection cursor is on screen.
+   * Strictly for the editor integration.
+   */
+  public var editorBlock:Block;
+
+  public var editorBlockTween:Tweenie;
+  public var eBlockAlpha:Float = 1;
+  public var eTween:Tween;
+
   public function new() {
     super(Game.ME);
     createRootInLayers(Game.ME.scroller, Const.DP_BG);
     create3Root(Game.ME.root3D);
+
+    blockPrim = new h3d.prim.Cube();
+    blockPrim.translate(-0.5, -0.5, -0.5);
+    blockPrim.unindex();
+    blockPrim.addNormals();
+    blockPrim.addUVs();
     // Create level root
     createTest();
     createGroups();
+    createEditorElements();
     createEntities();
 
     // Update Camera
@@ -84,6 +120,19 @@ class Level3D extends Process3D {
     stateStack = [];
     blockGroup = new Group<Block>();
     collectibles = new Group<Collectible>();
+  }
+
+  public function createEditorElements() {
+    editorBlock = new Block(0, 0, 0);
+    editorBlock.setBody(blockPrim, root3);
+    var mesh = editorBlock.body.toMesh();
+    mesh.material.color.setColor(0xa1ff01);
+    mesh.material.blendMode = Alpha;
+    mesh.material.shadows = false;
+    editorBlock.body.visible = false;
+    editorBlockTween = new Tweenie(Const.FPS);
+    eTween = editorBlockTween.createS(eBlockAlpha, 0.5, TLoop, 1.5);
+    eTween.plays = -1; // Plays the tween for infinity
   }
 
   public function createTest() {
@@ -140,6 +189,13 @@ class Level3D extends Process3D {
         }
       }
     }
+  }
+
+  public function createBlock(x:Int, y:Int, z:Int) {
+    var block = new Block(x, y, z);
+    block.setBody(blockPrim, root3);
+    block.body.toMesh().material.color.setColor(0xaa00aa);
+    blockGroup.add(block);
   }
 
   /** TRUE if given coords are in level bounds **/
@@ -257,7 +313,18 @@ class Level3D extends Process3D {
     if (game.ca.isKeyboardPressed(K.E)) {
       // Show the Editor
       game.showEditor();
-      this.pause();
+
+      // player.paus
+      // this.pause();
+    }
+    if (game.editor.flow.visible) {
+      editorBlockTween.update();
+      // trace(eBlockAlpha);
+      var material = editorBlock.body.toMesh().material;
+      // Blend mode needs to be applied for the alpha channel to be used.
+
+      material.color.set(material.color.x, material.color.y, material.color.z,
+        eBlockAlpha);
     }
   }
 
@@ -289,6 +356,9 @@ class Level3D extends Process3D {
   override function onDispose() {
     // Remove all entities
     player.destroy();
+
+    // Remove Editor Block
+    editorBlock.destroy();
 
     // Destroy blocks
     for (block in blockGroup) {
