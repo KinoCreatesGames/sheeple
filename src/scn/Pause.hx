@@ -48,23 +48,35 @@ class Pause extends dn.Process {
 
     // Add Buttons
     var resume = new TxtBtn(win.outerWidth, Lang.t._('Resume'), win);
-    resume.text.center();
+    resume.center();
     resume.onClick = (event) -> {
       resumeGame();
     }
 
+    var restart = new TxtBtn(win.outerWidth, Lang.t._('Restart'), win);
+    restart.center();
+    restart.onClick = (event) -> {
+      restartLevel();
+    }
+
     var quit = new TxtBtn(win.outerWidth, Lang.t._('To Title'), win);
-    quit.text.center();
+    quit.center();
     quit.onClick = (event) -> {
       toTitle();
     }
   }
 
   public function resumeGame() {
-    trace('Hit button');
     ct.releaseExclusivity();
     Game.ME.level.resume();
     // se = hxd.Res.sound.pause_out.play();
+    this.destroy();
+  }
+
+  public function restartLevel() {
+    ct.releaseExclusivity();
+    Game.ME.level.resume();
+    Game.ME.reloadCurrentLevel();
     this.destroy();
   }
 

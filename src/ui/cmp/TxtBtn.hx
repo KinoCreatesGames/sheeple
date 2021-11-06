@@ -24,6 +24,14 @@ class TxtBtn extends BaseBtn {
     setupEvents();
   }
 
+  /**
+   * Centers the text button in the proper area.
+   */
+  public inline function center() {
+    this.text.center();
+    int.x = text.alignCalcX();
+  }
+
   public inline function setupEvents() {
     int.onOut = (event) -> {
       text.alpha = 1;

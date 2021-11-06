@@ -113,13 +113,20 @@ class Game extends dn.Process {
   //     #end
   //   }
   // }
-  // public function reloadCurrentLevel() {
-  //   if (level != null) {
-  //     if (level.data != null) {
-  //       startLevel(Assets.projData.getLevel(level.data.uid));
-  //     }
-  //   }
-  // }
+  public function reloadCurrentLevel() {
+    if (level != null) {
+      level.destroy();
+
+      // if (level.data != null) {
+      //   startLevel(Assets.projData.getLevel(level.data.uid));
+      // }
+      // Garbage Collect
+      gc();
+      // Create a level
+      level = new Level3D();
+    }
+  }
+
   // public function startLevel(ldtkLevel:LDTkProj_Level, startX = -1,
   //     startY = -1) {
   //   if (level != null) {

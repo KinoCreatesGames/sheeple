@@ -187,7 +187,10 @@ class Entity3D {
    */
   public function dispose() {
     ALL.remove(this);
-
+    if (body != null) {
+      body.remove();
+      body = null;
+    }
     cd.destroy();
     cd = null;
   }
