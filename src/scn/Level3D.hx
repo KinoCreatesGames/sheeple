@@ -1,5 +1,13 @@
 package scn;
 
+import en3d.blocks.MysteryBlock;
+import en3d.blocks.HeavyBlock;
+import en3d.blocks.BlackHole;
+import en3d.blocks.StaticBlock;
+import en3d.blocks.Spike;
+import en3d.blocks.Goal;
+import en3d.blocks.IceBlock;
+import en3d.blocks.Bounce;
 import GameTypes.BlockType;
 import h3d.prim.Cube;
 import h3d.scene.Scene;
@@ -188,9 +196,37 @@ class Level3D extends Process3D {
   }
 
   public function createBlock(blockType:BlockType, x:Int, y:Int, z:Int) {
-    var block = new Block(x, y, z);
+    var block:Block = null; // new Block(x, y, z);
+    switch (blockType) {
+      case BlockB:
+        block = new Block(x, y, z);
+      case BounceB:
+        block = new Bounce(x, y, z);
+      case CrackedB:
+      // block = new
+      case IceB:
+        block = new IceBlock(x, y, z);
+
+      case StaticB:
+        block = new StaticBlock(x, y, z);
+
+      case GoalB:
+        block = new Goal(x, y, z);
+
+      case SpikeB:
+        block = new Spike(x, y, z);
+
+      case BlackHoleB:
+        block = new BlackHole(x, y, z);
+
+      case HeavyB:
+        block = new HeavyBlock(x, y, z);
+      case MysteryB:
+        block = new MysteryBlock(x, y, z);
+    }
+    // Set body
     block.setBody(blockPrim, root3);
-    block.body.toMesh().material.color.setColor(0xaa00aa);
+    // block.body.toMesh().material.color.setColor(0xaa00aa);
     blockGroup.add(block);
   }
 
