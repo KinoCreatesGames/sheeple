@@ -1,5 +1,6 @@
 package scn;
 
+import en3d.blocks.EditorBlock;
 import en3d.blocks.MysteryBlock;
 import en3d.blocks.HeavyBlock;
 import en3d.blocks.BlackHole;
@@ -128,7 +129,7 @@ class Level3D extends Process3D {
   }
 
   public function createEditorElements() {
-    editorBlock = new Block(0, 0, 0);
+    editorBlock = new EditorBlock(0, 0, 0);
     editorBlock.setBody(blockPrim, root3);
     var mesh = editorBlock.body.toMesh();
     mesh.material.color.setColor(0xa1ff01);

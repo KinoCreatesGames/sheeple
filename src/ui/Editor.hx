@@ -265,8 +265,15 @@ class Editor extends dn.Process {
 
   public function startEditor() {
     ct.takeExclusivity();
-    show();
-    level.editorBlock.body.visible = true;
+    show(); 
+    //Spawn block at player position
+    var eBlock = level.editorBlock;
+    eBlock.body.visible = true;
+    if(level.player != null) { 
+      eBlock.cx = level.player.cx;
+      eBlock.cy = level.player.cy;
+      eBlock.cz = level.player.cz;
+    }
     invalidate();
   }
 

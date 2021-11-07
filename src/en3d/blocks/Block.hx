@@ -1,5 +1,9 @@
 package en3d.blocks;
 
+import shaders.Outline3D;
+import h3d.prim.Cube;
+import h3d.mat.Pass;
+import dn.heaps.filter.PixelOutline;
 import h3d.prim.Primitive;
 import h3d.scene.Object;
 
@@ -17,6 +21,11 @@ class Block extends IsoEntity3D {
     mesh.material.color.setColor(0xaaaaaa);
     mesh.material.shadows = false;
     body = mesh;
+    // var shader = new Outline3D();
+    // mesh.material.blendMode = Alpha;
+    // shader.outlineColor = hxsl.Types.Vec.fromColor(0xaa);
+
+    // mesh.material.mainPass.addShader(shader);
   }
 
   override function update() {
