@@ -371,6 +371,8 @@ class Level3D extends Process3D {
   public function handleGameOver() {
     if (!player.isAlive()) {
       // Start Game Over Scene and conditions
+      this.pause();
+      new GameOver();
     }
   }
 
