@@ -1,5 +1,10 @@
 package scn;
 
+import en3d.blocks.CrackedBlock;
+import h3d.prim.Sphere;
+import h3d.shader.CubeMap;
+import h3d.scene.Mesh;
+import h3d.mat.Texture;
 import en3d.blocks.EditorBlock;
 import en3d.blocks.MysteryBlock;
 import en3d.blocks.HeavyBlock;
@@ -92,6 +97,8 @@ class Level3D extends Process3D {
   public var eBlockAlpha:Float = 1;
   public var eTween:Tween;
 
+  var skyTexture:h3d.mat.Texture;
+
   public function new() {
     super(Game.ME);
     createRootInLayers(Game.ME.scroller, Const.DP_BG);
@@ -103,6 +110,7 @@ class Level3D extends Process3D {
     blockPrim.addNormals();
     blockPrim.addUVs();
     // Create level root
+    createSkyBox();
     createTest();
     createGroups();
     createEditorElements();
@@ -116,6 +124,25 @@ class Level3D extends Process3D {
 
     // On level Creation setup camera controller
     new h3d.scene.CameraController(null, root3).loadFromCamera();
+  }
+
+  public function createSkyBox() {
+    skyTexture = new Texture(2048, 2048, [Cube, MipMapped]);
+
+    // Create the Six Faces
+    var tex = hxd.Res.textures;
+    var faceTex = [tex.right, tex.left, tex.top, tex.bot, tex.front, tex.back];
+    for (i in 0...6) {
+      var face = faceTex[i].toBitmap();
+      skyTexture.uploadBitmap(face, 0, i);
+    }
+    skyTexture.mipMap = Linear;
+    var sky = new Sphere(30, 128, 128);
+    sky.addNormals();
+    var skyMesh = new Mesh(sky, root3);
+    skyMesh.material.mainPass.culling = Front;
+    skyMesh.material.mainPass.addShader(new CubeMap(skyTexture));
+    skyMesh.material.shadows = false;
   }
 
   /**
@@ -204,7 +231,7 @@ class Level3D extends Process3D {
       case BounceB:
         block = new Bounce(x, y, z);
       case CrackedB:
-      // block = new
+        block = new CrackedBlock(x, y, z);
       case IceB:
         block = new IceBlock(x, y, z);
 

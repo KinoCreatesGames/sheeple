@@ -1,5 +1,6 @@
 package en3d;
 
+import en3d.collectibles.Checkpoint;
 import en3d.blocks.Spike;
 import en3d.blocks.BlackHole;
 import en3d.blocks.Bounce;
@@ -80,10 +81,15 @@ class Player3D extends IsoEntity3D {
     }
   }
 
+  /**
+   * Handles block collisions beneath your feet.
+   * If you encounter a bounce block for example,
+   * you will be boosted into the air.
+   */
   public function handleBlockCollision() {
     if (level != null) {
       // Handle collided with certain blocks
-      var block = level.levelCollided(cx, cy, cz);
+      var block = level.levelCollided(cx, cy, cz - 1);
       if (block != null) {
         var blockType = Type.getClass(block);
         switch (blockType) {
@@ -115,6 +121,8 @@ class Player3D extends IsoEntity3D {
       if (collectible != null) {
         var collectibleType = Type.getClass(collectible);
         switch (collectibleType) {
+          case Checkpoint:
+          // Save Position
           case _:
             // Kill the collectible
             collectible.kill(this);

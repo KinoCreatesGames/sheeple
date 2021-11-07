@@ -269,7 +269,10 @@ class Editor extends dn.Process {
     //Spawn block at player position
     var eBlock = level.editorBlock;
     eBlock.body.visible = true;
-    if(level.player != null) { 
+    if (level.player != null) { 
+      plCursor.x = level.player.cx;
+      plCursor.y = level.player.cy;
+      plCursor.z = level.player.cz;
       eBlock.cx = level.player.cx;
       eBlock.cy = level.player.cy;
       eBlock.cz = level.player.cz;
