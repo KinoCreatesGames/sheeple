@@ -111,7 +111,6 @@ class Level3D extends Process3D {
     blockPrim.addUVs();
     // Create level root
     createSkyBox();
-    createTest();
     createGroups();
     createEditorElements();
     createEntities();
@@ -166,29 +165,6 @@ class Level3D extends Process3D {
     editorBlockTween = new Tweenie(Const.FPS);
     eTween = editorBlockTween.createS(eBlockAlpha, 0.5, TLoop, 1.5);
     eTween.plays = -1; // Plays the tween for infinity
-  }
-
-  public function createTest() {
-    // Create Cube
-    var prim = new h3d.prim.Cube();
-    prim.translate(-0.5, -0.5, -0.5);
-    prim.unindex();
-    prim.addNormals();
-    prim.addUVs();
-    // Create second cube
-    var mesh = new h3d.scene.Mesh(prim, root3);
-    mesh.material.color.setColor(0xff00ff);
-    mesh.material.shadows = false;
-    // mesh.z = 0.7;
-    // mesh.y = 2;
-    // adds a directional light to the scene
-    var light = new h3d.scene.fwd.DirLight(new h3d.Vector(0.5, 0.5, -0.5),
-      root3);
-    light.enableSpecular = true;
-
-    // set the ambient light to 30%
-    // s3d.lightSystem.ambientLight.set(0.3, 0.3, 0.3);
-    // Boot.ME.s3d.lightSystem..set(0.3, 0.3, 0.3);
   }
 
   public function createEntities() {

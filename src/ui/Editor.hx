@@ -1,5 +1,16 @@
 package ui;
 
+import en3d.blocks.StaticBlock;
+import en3d.blocks.IceBlock;
+import en3d.blocks.MysteryBlock;
+import en3d.blocks.Goal;
+import en3d.blocks.CrackedBlock;
+import en3d.blocks.HeavyBlock;
+import en3d.blocks.BlackHole;
+import en3d.blocks.Block;
+import en3d.blocks.Bounce;
+import en3d.blocks.Spike;
+import GameTypes.LvlSave;
 import h2d.Flow.FlowAlign;
 import h2d.Flow.FlowOverflow;
 import GameTypes.BlockType;
@@ -65,7 +76,7 @@ class Editor extends dn.Process {
 
   public function new() {
     super(Game.ME);
-     ct = Main.ME.controller.createAccess('pause');
+     ct = Main.ME.controller.createAccess('editor');
     createRootInLayers(game.root, Const.DP_UI);
     currentBlockType = BlockType.BlockB;
     //Pixel Perfect Rendering
@@ -107,6 +118,16 @@ class Editor extends dn.Process {
       #end
     };
 
+        //File Option
+    var save = new TxtBtn(24, Lang.t._('Save'), menuBar);
+    save.onClick = (event) -> {
+      #if debug
+      trace('Clicked save');
+      #else
+      saveLevel();
+      #end
+    };
+
     //Exit Editor Mode
     var file = new TxtBtn(24, Lang.t._('Exit'), menuBar);
     file.onClick = (event) -> {
@@ -117,6 +138,56 @@ class Editor extends dn.Process {
       #end 
       exitEditor();
     }; 
+  }
+
+  public function saveLevel() { 
+    //Create Save Data
+    var lvlSave:LvlSave = {
+      playerStart: {
+        x:0,
+        y:0,
+        z:0
+      },
+      blocks:[]
+    }
+    for (block in level.blockGroup) {
+      lvlSave.blocks.push({
+        blockType: blockTypeToString(block),
+        pos: {
+          x: block.cx,
+          y: block.cy,
+          z: block.cz
+        }
+      });
+    }
+  }
+
+  public function blockTypeToString(block:Block):BlockType {
+    var blockType = Type.getClass(block);
+    return switch(blockType) {
+      case Bounce:
+        BounceB;
+      case Spike:
+        SpikeB;
+      case BlackHole:
+        BlackHoleB;
+      case HeavyBlock:
+        HeavyB;
+      case Block:
+        BlockB;
+      case CrackedBlock:
+        CrackedB;
+      case Goal:
+        GoalB;
+      case MysteryBlock:
+        MysteryB;
+      case IceBlock:
+        IceB;
+      case StaticBlock:
+        StaticB;
+      case _:
+        BlockB;
+    }
   }
 
   public function setupBlockPanel() {
@@ -177,7 +248,7 @@ class Editor extends dn.Process {
   public function addCollectibleTypes() {
     var types = [BambooR, JLife, JetPack];
 
-    for(collectible in types) {
+    for (collectible in types) {
        var btn = new TxtBtn(collectible, collectiblePanel);
       btn.onClick = (event) -> {
         currentCollectibleType = collectible;

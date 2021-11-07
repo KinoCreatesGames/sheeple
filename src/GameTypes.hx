@@ -5,6 +5,28 @@ typedef LvlState = {
   blockPositions:Array<Vector>
 }
 
+typedef LvlSave = {
+  playerStart:VectorSave,
+  blocks:Array<BlockSave>
+}
+
+/**
+ * Vector Save Stats
+ */
+typedef VectorSave = {
+  x:Int,
+  y:Int,
+  z:Int
+}
+
+/**
+ * Block Save Stats
+ */
+typedef BlockSave = {
+  blockType:BlockType,
+  pos:VectorSave
+}
+
 /**
  * The different types of block
  * available for the user to use within the
