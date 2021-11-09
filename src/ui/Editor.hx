@@ -1,5 +1,7 @@
 package ui;
 
+
+import dn.data.SavedData;
 import en3d.blocks.StaticBlock;
 import en3d.blocks.IceBlock;
 import en3d.blocks.MysteryBlock;
@@ -118,7 +120,7 @@ class Editor extends dn.Process {
       #end
     };
 
-        //File Option
+    //File Option
     var save = new TxtBtn(24, Lang.t._('Save'), menuBar);
     save.onClick = (event) -> {
       #if debug
@@ -127,6 +129,16 @@ class Editor extends dn.Process {
       saveLevel();
       #end
     };
+
+    var load = new TxtBtn(24, Lang.t._('Load'), menuBar);
+    load.onClick = (event) -> {
+      #if debug
+      trace('Clicked load');
+      #else
+      loadLevel();
+      #end
+    };
+
 
     //Exit Editor Mode
     var file = new TxtBtn(24, Lang.t._('Exit'), menuBar);
@@ -160,6 +172,22 @@ class Editor extends dn.Process {
         }
       });
     }
+    SavedData.save('Level', lvlSave);
+  }
+
+  public function loadLevel() {
+    var data :LvlSave = cast SavedData.load('Level', {
+       playerStart: {
+        x:0,
+        y:0,
+        z:0
+      },
+      blocks:[]
+    });
+    #if debug
+    trace('Level Data loaded ${data}');
+    #else
+    #end
   }
 
   public function blockTypeToString(block:Block):BlockType {
