@@ -39,9 +39,14 @@ class Player3D extends IsoEntity3D {
    * The amount to lerp by when the player moves to the next
    * tile.
    */
-  public static inline var MOVE_DT:Float = 0.5;
+  public static inline var MOVE_DT:Float = 0.1;
 
   public static inline var BOUNCE_HEIGHT:Int = 4;
+
+  /**
+   * The amount to move in the Z aspect.
+   */
+  public var moveZ:Int = 0;
 
   /**
    * The current block that is being grabbed currently
@@ -176,11 +181,12 @@ class Player3D extends IsoEntity3D {
   }
 
   public function updateControls() {
-    var hasInput = (ct.leftPressed()
-      || ct.rightPressed()
-      || ct.downPressed()
-      || ct.upPressed()
-      || ct.aDown());
+    var hasInput = (ct.leftDown()
+      || ct.rightDown()
+      || ct.downDown()
+      || ct.upDown()
+      || ct.aDown())
+      && moveComplete;
     var xAxis = false;
     var yAxis = false;
 
@@ -220,22 +226,38 @@ class Player3D extends IsoEntity3D {
           blockDir = UP;
         }
       }
-      if (ct.leftPressed() && canMove(cx - MOVE_SPD, cy)) {
+      if (ct.leftDown() && canMove(cx - MOVE_SPD, cy)) {
         // cx -= MOVE_SPD;
+        moveComplete = false;
         var t = mvTween.createS(xr, -0.5, TEase, MOVE_DT);
         t.end(() -> {
-          setPosCase(M.floor(cx + xr), cy, cz);
+          setPosCase(M.floor(cx + xr), cy, cz + moveZ);
+          moveComplete = true;
         });
-      } else if (ct.rightPressed() && canMove(cx + MOVE_SPD, cy)) {
+      } else if (ct.rightDown() && canMove(cx + MOVE_SPD, cy)) {
         // cx += MOVE_SPD;
+        moveComplete = false;
         var t = mvTween.createS(xr, 1.5, TEase, MOVE_DT);
         t.end(() -> {
-          setPosCase(cx + 1, cy, cz);
+          setPosCase(cx + 1, cy, cz + moveZ);
+          moveComplete = true;
         });
-      } else if (ct.downPressed() && canMove(cx, cy + MOVE_SPD)) {
-        cy += MOVE_SPD;
-      } else if (ct.upPressed() && canMove(cx, cy - MOVE_SPD)) {
-        cy -= MOVE_SPD;
+      } else if (ct.downDown() && canMove(cx, cy + MOVE_SPD)) {
+        moveComplete = false;
+        var t = mvTween.createS(yr, 2, TEase, MOVE_DT);
+        t.end(() -> {
+          setPosCase(cx, cy + 1, cz + moveZ);
+          moveComplete = true;
+        });
+      } else if (ct.upDown() && canMove(cx, cy - MOVE_SPD)) {
+        // cy -= MOVE_SPD;
+
+        moveComplete = false;
+        var t = mvTween.createS(yr, 0, TEase, MOVE_DT);
+        t.end(() -> {
+          setPosCase(cx, cy - 1, cz + moveZ);
+          moveComplete = true;
+        });
       } else {
         Game.ME.camera.shakeS(0.5, 1);
       }
@@ -315,6 +337,7 @@ class Player3D extends IsoEntity3D {
     var block = level.levelCollided(x, y, cz);
     var topBlock = level.levelCollided(x, y, cz + 1);
     var pushBlock = heldBlock;
+    moveZ = 0;
     // Used for checking if the player should fall later
 
     if (pushBlock != null && pushBlock.cx == x && pushBlock.cy == y) {
@@ -333,7 +356,8 @@ class Player3D extends IsoEntity3D {
         // trace('collided with free space');
         #else
         #end
-        cz += 1;
+        // press the Z
+        moveZ = 1;
         return true;
       }
     }
