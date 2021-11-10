@@ -266,21 +266,42 @@ class Player3D extends IsoEntity3D {
         var xAxis = heldBlock.cx == cx;
         var yAxis = heldBlock.cy == cy;
         var movedBlock = false;
+        var tweenBlock = heldBlock;
         if (yAxis) {
           if (ct.leftPressed()) {
-            heldBlock.cx -= MOVE_SPD;
+            // heldBlock.cx -= MOVE_SPD;
+            var t = mvTween.createS(tweenBlock.xr, -0.5, TEase, MOVE_DT);
+            t.end(() -> {
+              tweenBlock.setPosCase(tweenBlock.cx - 1, tweenBlock.cy,
+                tweenBlock.cz);
+            });
             movedBlock = true;
           } else if (ct.rightPressed()) {
-            heldBlock.cx += MOVE_SPD;
+            // heldBlock.cx += MOVE_SPD;
+            var t = mvTween.createS(tweenBlock.xr, 1.5, TEase, MOVE_DT);
+            t.end(() -> {
+              tweenBlock.setPosCase(tweenBlock.cx + 1, tweenBlock.cy,
+                tweenBlock.cz);
+            });
             movedBlock = true;
           }
         }
         if (xAxis) {
           if (ct.downPressed()) {
-            heldBlock.cy += MOVE_SPD;
+            // heldBlock.cy += MOVE_SPD;
+            var t = mvTween.createS(tweenBlock.yr, 2, TEase, MOVE_DT);
+            t.end(() -> {
+              tweenBlock.setPosCase(tweenBlock.cx, tweenBlock.cy + 1,
+                tweenBlock.cz);
+            });
             movedBlock = true;
           } else if (ct.upPressed()) {
-            heldBlock.cy -= MOVE_SPD;
+            // heldBlock.cy -= MOVE_SPD;
+            var t = mvTween.createS(tweenBlock.yr, 0, TEase, MOVE_DT);
+            t.end(() -> {
+              tweenBlock.setPosCase(tweenBlock.cx, tweenBlock.cy - 1,
+                tweenBlock.cz);
+            });
             movedBlock = true;
           }
         }
