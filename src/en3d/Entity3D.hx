@@ -107,6 +107,12 @@ class Entity3D {
     return dy + bdy;
   }
 
+  public var dzTotal(get, never):Float;
+
+  public inline function get_dzTotal() {
+    return dz + bdz;
+  }
+
   // Frictions
   // Multipliers applied on each frame to normal velocities
   public var frictX = 0.82;
@@ -306,5 +312,28 @@ class Entity3D {
     bdy *= Math.pow(bumpFrict, tmod);
     if (M.fabs(dy) <= 0.0005 * tmod) dy = 0;
     if (M.fabs(bdy) <= 0.0005 * tmod) bdy = 0;
+
+    // Z
+    var steps = M.ceil(M.fabs(dzTotal * tmod));
+    var step = dzTotal * tmod / steps;
+    while (steps > 0) {
+      zr += step;
+
+      // [ add Y collisions checks here ]
+
+      while (zr > 1) {
+        zr--;
+        cz++;
+      }
+      while (zr < 0) {
+        yr++;
+        cz--;
+      }
+      steps--;
+    }
+    dz *= Math.pow(frictZ, tmod);
+    bdz *= Math.pow(bumpFrict, tmod);
+    if (M.fabs(dz) <= 0.0005 * tmod) dz = 0;
+    if (M.fabs(bdz) <= 0.0005 * tmod) bdz = 0;
   }
 }

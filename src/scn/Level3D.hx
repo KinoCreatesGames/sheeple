@@ -110,6 +110,7 @@ class Level3D extends Process3D {
     blockPrim.addNormals();
     blockPrim.addUVs();
     // Create level root
+    setupLight();
     createSkyBox();
     createGroups();
     createEditorElements();
@@ -123,6 +124,12 @@ class Level3D extends Process3D {
 
     // On level Creation setup camera controller
     new h3d.scene.CameraController(null, root3).loadFromCamera();
+  }
+
+  public function setupLight() {
+    var light = new h3d.scene.fwd.DirLight(new h3d.Vector(0.5, 0.5, -0.5),
+      root3);
+    light.enableSpecular = true;
   }
 
   public function createSkyBox() {

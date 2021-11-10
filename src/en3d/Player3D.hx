@@ -31,8 +31,16 @@ class Player3D extends IsoEntity3D {
   public var stepCount:Int = 0;
   public var pstate:PState;
   public var blockDir:BDir;
+  public var moveComplete:Bool;
 
   public static inline var MOVE_SPD:Int = 1;
+
+  /**
+   * The amount to lerp by when the player moves to the next
+   * tile.
+   */
+  public static inline var MOVE_DT:Float = 0.5;
+
   public static inline var BOUNCE_HEIGHT:Int = 4;
 
   /**
@@ -40,9 +48,13 @@ class Player3D extends IsoEntity3D {
    */
   public var heldBlock:Block;
 
+  public var mvTween:Tweenie;
+
   public function new(x:Int, y:Int, z:Int, root) {
     super(x, y, z);
     pstate = STAND;
+    moveComplete = true;
+    mvTween = new Tweenie(Const.FPS);
     setup();
     hud.invalidate();
     setBody(root);
@@ -67,6 +79,7 @@ class Player3D extends IsoEntity3D {
 
   override function update() {
     super.update();
+    mvTween.update();
     handleUndo();
     updateControls();
     handleBlockCollision();
@@ -208,9 +221,17 @@ class Player3D extends IsoEntity3D {
         }
       }
       if (ct.leftPressed() && canMove(cx - MOVE_SPD, cy)) {
-        cx -= MOVE_SPD;
+        // cx -= MOVE_SPD;
+        var t = mvTween.createS(xr, -0.5, TEase, MOVE_DT);
+        t.end(() -> {
+          setPosCase(M.floor(cx + xr), cy, cz);
+        });
       } else if (ct.rightPressed() && canMove(cx + MOVE_SPD, cy)) {
-        cx += MOVE_SPD;
+        // cx += MOVE_SPD;
+        var t = mvTween.createS(xr, 1.5, TEase, MOVE_DT);
+        t.end(() -> {
+          setPosCase(cx + 1, cy, cz);
+        });
       } else if (ct.downPressed() && canMove(cx, cy + MOVE_SPD)) {
         cy += MOVE_SPD;
       } else if (ct.upPressed() && canMove(cx, cy - MOVE_SPD)) {
@@ -250,6 +271,14 @@ class Player3D extends IsoEntity3D {
         heldBlock = null;
       }
     }
+  }
+
+  override function postUpdate() {
+    super.postUpdate();
+    // if (xr > 1 || zr > 1 || yr > 1) {
+
+    //   trace('${cx}, ${cy} ${cz}');
+    // }
   }
 
   public function getDirX() {
