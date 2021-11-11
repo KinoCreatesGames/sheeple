@@ -52,6 +52,7 @@ class Hud extends dn.Process {
     setupScore();
     setupHighScore();
     setupStepCount();
+    setupStepCombo();
   }
 
   public function setupLives() {
@@ -121,7 +122,7 @@ class Hud extends dn.Process {
   }
 
   public function renderStepCombo() {
-    stepCountText.text = 'Step Combo ${level.player.stepCombo}';
+    stepComboTstepComboTe.text = 'Step Combo ${level.player.stepCombo}';
   }
 
   override function postUpdate() {
