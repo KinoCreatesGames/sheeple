@@ -122,7 +122,7 @@ class Hud extends dn.Process {
   }
 
   public function renderStepCombo() {
-    stepComboTstepComboTe.text = 'Step Combo ${level.player.stepCombo}';
+    stepComboText.text = 'Step Combo ${level.player.stepCombo}';
   }
 
   override function postUpdate() {
