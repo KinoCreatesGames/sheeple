@@ -26,6 +26,7 @@ class Hud extends dn.Process {
   public var livesText:h2d.Text;
   public var scoreText:h2d.Text;
   public var highScoreText:h2d.Text;
+  public var stepComboText:h2d.Text;
   public var stepCountText:h2d.Text;
 
   public function new() {
@@ -71,6 +72,12 @@ class Hud extends dn.Process {
     highScoreText.text = 'High Score 0';
   }
 
+  public function setupStepCombo() {
+    stepComboText = new h2d.Text(Assets.fontMedium, flow);
+    stepComboText.textColor = 0xffffff;
+    stepComboText.text = 'Step Combo 0';
+  }
+
   public function setupStepCount() {
     stepCountText = new h2d.Text(Assets.fontMedium, flow);
     stepCountText.textColor = 0xffffff;
@@ -90,7 +97,9 @@ class Hud extends dn.Process {
       if (level.player != null) {
         renderLives();
         renderScore();
+        renderHighScore();
         renderStepCount();
+        renderStepCombo();
       }
     }
   }
@@ -109,6 +118,10 @@ class Hud extends dn.Process {
 
   public function renderStepCount() {
     stepCountText.text = 'Steps ${level.player.stepCount}';
+  }
+
+  public function renderStepCombo() {
+    stepCountText.text = 'Step Combo ${level.player.stepCombo}';
   }
 
   override function postUpdate() {
