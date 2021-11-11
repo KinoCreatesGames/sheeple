@@ -61,6 +61,13 @@ class Level3D extends Process3D {
 
   public var player:en3d.Player3D;
 
+  /**
+   * Player starting position.
+   * Used to determine where the player
+   * has gone compared to the top of the tower.
+   */
+  public var playerStartPos:Vector;
+
   public var blockGroup:Group<Block>;
   public var collectibles:Group<Collectible>;
 
@@ -83,6 +90,13 @@ class Level3D extends Process3D {
    * Initialized at 0.
    */
   public var score:Int = 0;
+
+  /**
+   * High score for the current level.
+   * Gets updated as the time goes on during the level.
+   * Initialized at 0.
+   */
+  public var highScore:Int = 0;
 
   public var blockPrim:Cube;
 
@@ -175,7 +189,8 @@ class Level3D extends Process3D {
   }
 
   public function createEntities() {
-    player = new en3d.Player3D(0, 11, 6, root3);
+    player = new en3d.Player3D(0, 11, 5, root3);
+    playerStartPos = new Vector(player.cx, player.cy, player.cz);
 
     // base primitive for all blocks
     var prim = new h3d.prim.Cube();

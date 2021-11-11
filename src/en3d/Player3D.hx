@@ -313,11 +313,22 @@ class Player3D extends IsoEntity3D {
 
         heldBlock = null;
       }
+      // Updates the step count only during the input of the game.
+    }
+  }
+
+  public function updateStepCount() {
+    if (game.hud != null) {
+      // Check if the player  step increases step count
+      var playerStep = Std.int(cz - Std.int(game.level.playerStartPos.z));
+      stepCount = stepCount < (playerStep) ? playerStep : stepCount;
+      game.invalidateHud();
     }
   }
 
   override function postUpdate() {
     super.postUpdate();
+    updateStepCount();
     // if (xr > 1 || zr > 1 || yr > 1) {
 
     //   trace('${cx}, ${cy} ${cz}');
@@ -379,6 +390,7 @@ class Player3D extends IsoEntity3D {
         #end
         // press the Z
         moveZ = 1;
+        // This means we also updated the z access
         return true;
       }
     }

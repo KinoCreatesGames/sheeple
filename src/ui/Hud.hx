@@ -1,5 +1,6 @@
 package ui;
 
+import h3d.Vector;
 import h2d.Flow.FlowAlign;
 import scn.Level3D;
 
@@ -24,6 +25,7 @@ class Hud extends dn.Process {
 
   public var livesText:h2d.Text;
   public var scoreText:h2d.Text;
+  public var highScoreText:h2d.Text;
   public var stepCountText:h2d.Text;
 
   public function new() {
@@ -47,6 +49,7 @@ class Hud extends dn.Process {
     flow.horizontalSpacing = 12;
     setupLives();
     setupScore();
+    setupHighScore();
     setupStepCount();
   }
 
@@ -60,6 +63,12 @@ class Hud extends dn.Process {
     scoreText = new h2d.Text(Assets.fontMedium, flow);
     scoreText.textColor = 0xffffff;
     scoreText.text = 'Score 0';
+  }
+
+  public function setupHighScore() {
+    highScoreText = new h2d.Text(Assets.fontMedium, flow);
+    highScoreText.textColor = 0xffffff;
+    highScoreText.text = 'High Score 0';
   }
 
   public function setupStepCount() {
@@ -92,6 +101,10 @@ class Hud extends dn.Process {
 
   public function renderScore() {
     scoreText.text = 'Score ${level.score}';
+  }
+
+  public function renderHighScore() {
+    highScoreText.text = 'Score ${level.highScore}';
   }
 
   public function renderStepCount() {
