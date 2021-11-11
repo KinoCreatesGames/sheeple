@@ -29,6 +29,13 @@ enum abstract BDir(String) from String to String {
 class Player3D extends IsoEntity3D {
   public var ct:ControllerAccess;
   public var stepCount:Int = 0;
+
+  /**
+   * The amount of steps you've gone up without stopping.
+   * Based on the step combo timer.
+   */
+  public var stepCombo:Int = 0;
+
   public var pstate:PState;
   public var blockDir:BDir;
   public var moveComplete:Bool;
@@ -42,6 +49,12 @@ class Player3D extends IsoEntity3D {
   public static inline var MOVE_DT:Float = 0.1;
 
   public static inline var BOUNCE_HEIGHT:Int = 4;
+
+  /**
+   * Amount of time to wait before resetting the 
+   * combo to 0.
+   */
+  public static inline var STEP_TIMER:Int = 3;
 
   /**
    * The amount to move in the Z aspect.
@@ -321,7 +334,13 @@ class Player3D extends IsoEntity3D {
     if (game.hud != null) {
       // Check if the player  step increases step count
       var playerStep = Std.int(cz - Std.int(game.level.playerStartPos.z));
-      stepCount = stepCount < (playerStep) ? playerStep : stepCount;
+      if (stepCount < (playerStep)) {
+        stepCount = playerStep;
+        stepCombo++;
+        cd.setS('stepCombo', STEP_TIMER, () -> {
+          stepCombo = 0;
+        });
+      }
       game.invalidateHud();
     }
   }
