@@ -41,6 +41,13 @@ class Group<T> {
     return index < members.length;
   }
 
+  /**
+   * Removes all elements from the group
+   */
+  public inline function clear() {
+    members.resize(0);
+  }
+
   public inline function next() {
     return members[index++];
   }

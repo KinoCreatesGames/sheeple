@@ -1,3 +1,4 @@
+import scn.Settings;
 import en3d.Entity3D;
 import h3d.scene.Object;
 import scn.Level3D;
@@ -65,7 +66,8 @@ class Game extends dn.Process {
     editor = new ui.Editor();
     editor.hide();
 
-    startInitialGame();
+    new Settings();
+    // startInitialGame();
     Process.resizeAll();
     trace(Lang.t._("Game is ready."));
   }

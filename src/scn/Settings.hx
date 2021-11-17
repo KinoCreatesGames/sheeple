@@ -42,7 +42,7 @@ class Settings extends dn.Process {
     win.minWidth = Std.int(w() / 2);
 
     win.verticalSpacing = 16;
-    win.layout = Horizontal;
+    win.layout = Vertical;
     addOptions();
   }
 
@@ -51,19 +51,26 @@ class Settings extends dn.Process {
     var title = new h2d.Text(Assets.fontLarge, win);
     title.text = Lang.t._('Settings');
     title.center();
+
     // Add Volume Setting
     var volText = new h2d.Text(Assets.fontMedium, win);
     volText.text = Lang.t._('Volume');
     // Add buttons
-    var volDown = new h2d.Text(Assets.fontMedium, win);
+    var flow = new h2d.Flow(win);
+    // flow.minWidth = Std.int(w() / 2);
+    flow.paddingLeft = -20;
+    flow.horizontalSpacing = 16;
+    flow.layout = Horizontal;
+
+    var volDown = new h2d.Text(Assets.fontMedium, flow);
     volDown.text = Lang.t._('Down');
-    var downInt = setupOption(volDown);
-    volumeDisplay = new h2d.Text(Assets.fontMedium, win);
+    var downInt = setupOption(volDown, flow);
+    volumeDisplay = new h2d.Text(Assets.fontMedium, flow);
 
     volumeDisplay.text = Lang.t._('${manager.masterVolume * 100}');
-    var volUp = new h2d.Text(Assets.fontMedium, win);
+    var volUp = new h2d.Text(Assets.fontMedium, flow);
     volUp.text = Lang.t._('Up');
-    var upInt = setupOption(volUp);
+    var upInt = setupOption(volUp, flow);
     upInt.onClick = (event) -> {
       manager.masterVolume = M.fclamp(manager.masterVolume + .1, 0, 1);
       volumeDisplay.text = Lang.t._('${manager.masterVolume * 100}');
@@ -77,9 +84,9 @@ class Settings extends dn.Process {
     }
   }
 
-  public function setupOption(text:h2d.Text) {
+  public function setupOption(text:h2d.Text, flow:h2d.Flow) {
     text.center();
-    var interactive = new h2d.Interactive(win.outerWidth, text.textHeight,
+    var interactive = new h2d.Interactive(flow.outerWidth, text.textHeight,
       text);
     interactive.onOut = (event) -> {
       text.alpha = 1;
@@ -103,7 +110,7 @@ class Settings extends dn.Process {
 
   public function loadSettings() {
     if (SavedData.exists(Const.SETTINGS)) {
-      var data = SavedData.load(Const.SETTINGS, {volume: Float});
+      var data = SavedData.load(Const.SETTINGS, {volume: 0});
       manager.masterVolume = cast data.volume;
     }
   }

@@ -120,7 +120,7 @@ class Editor extends dn.Process {
       #end
     };
 
-    //File Option
+    //Save Option
     var save = new TxtBtn(24, Lang.t._('Save'), menuBar);
     save.onClick = (event) -> {
       #if debug
@@ -134,9 +134,20 @@ class Editor extends dn.Process {
     load.onClick = (event) -> {
       #if debug
       trace('Clicked load');
-      #else
-      loadLevel();
+      #else 
       #end
+      loadLevel();
+    };
+
+    // Clear the blocks on the current level
+    var clear = new TxtBtn(24, Lang.t._('Clear'), menuBar);
+    clear.onClick = (event) -> {
+      #if debug
+      trace('Clicked Clear level');
+      #else 
+      #end
+      clearLevel();
+       
     };
 
 
@@ -188,6 +199,16 @@ class Editor extends dn.Process {
     trace('Level Data loaded ${data}');
     #else
     #end
+  }
+
+  public function clearLevel() {
+    #if debug
+    trace('Cleared the level data.');
+    #else  
+    #end
+    if(level != null) {
+      level.clearLevel();
+    }
   }
 
   public function blockTypeToString(block:Block):BlockType {
@@ -283,7 +304,6 @@ class Editor extends dn.Process {
       }; 
     }
   }
-
 
   public inline function invalidate() {
     invalidated = true;

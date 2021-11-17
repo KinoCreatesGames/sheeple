@@ -353,6 +353,22 @@ class Level3D extends Process3D {
   }
 
   /**
+   * Clears all the level elements such
+   * as the blocks.
+   */
+  public function clearLevel() {
+    for (block in blockGroup) {
+      block.destroy();
+    }
+    blockGroup.clear();
+
+    for (collectible in collectibles) {
+      collectible.destroy();
+    }
+    collectibles.clear();
+  }
+
+  /**
    * Marks the level as complete and starts the level complete
    * transition.
    */
