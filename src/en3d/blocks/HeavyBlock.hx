@@ -11,8 +11,13 @@ import h3d.scene.Object;
  */
 class HeavyBlock extends Block {
   override function setBody(prim:Primitive, root:Object) {
-    super.setBody(prim, root);
-    var mesh:Mesh = cast body;
-    mesh.material.color.setColor(0x3f0f0f);
+    if (cache != null) {
+      var model = cache.loadModel(hxd.Res.models.heavy_block);
+      model.getMaterials().iter((mat) -> {
+        mat.shadows = false;
+      });
+      root.addChild(model);
+      body = model;
+    }
   }
 }

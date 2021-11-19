@@ -66,8 +66,8 @@ class Game extends dn.Process {
     editor = new ui.Editor();
     editor.hide();
 
-    new Settings();
-    // startInitialGame();
+    // new Settings();
+    startInitialGame();
     Process.resizeAll();
     trace(Lang.t._("Game is ready."));
   }

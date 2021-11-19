@@ -1,5 +1,7 @@
 package scn;
 
+import h3d.prim.ModelCache;
+import en3d.blocks.StdBlock;
 import en3d.blocks.CrackedBlock;
 import h3d.prim.Sphere;
 import h3d.shader.CubeMap;
@@ -99,6 +101,8 @@ class Level3D extends Process3D {
   public var highScore:Int = 0;
 
   public var blockPrim:Cube;
+
+  public var cache:ModelCache;
 
   /**
    * A Cube mesh for showing where the 
@@ -200,10 +204,12 @@ class Level3D extends Process3D {
     prim.addUVs();
 
     // Create test blocks for collision checks
+    cache = new h3d.prim.ModelCache();
     for (z in 0...5) {
       for (i in 0...20) {
         for (y in 0...20) {
-          var block = new Block(i, y - z, z);
+          var block = new StdBlock(i, y - z, z);
+          block.cache = cache;
           block.setBody(prim, root3);
           blockGroup.add(block);
         }
@@ -213,12 +219,14 @@ class Level3D extends Process3D {
     for (z in 5...9) {
       for (i in 0...10) {
         for (y in 0...10) {
-          var block = new Block(i, y, z);
+          var block = new StdBlock(i, y, z);
+          block.cache = cache;
           block.setBody(prim, root3);
           blockGroup.add(block);
         }
       }
     }
+    // cache.dispose();
   }
 
   public function createBlock(blockType:BlockType, x:Int, y:Int, z:Int) {
@@ -250,6 +258,7 @@ class Level3D extends Process3D {
       case MysteryB:
         block = new MysteryBlock(x, y, z);
     }
+    block.cache = cache;
     // Set body
     block.setBody(blockPrim, root3);
     // block.body.toMesh().material.color.setColor(0xaa00aa);
@@ -442,6 +451,7 @@ class Level3D extends Process3D {
     for (collectible in collectibles) {
       collectible.destroy();
     }
+    cache.dispose();
     super.onDispose();
   }
 }

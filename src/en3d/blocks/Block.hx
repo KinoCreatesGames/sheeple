@@ -1,5 +1,6 @@
 package en3d.blocks;
 
+import h3d.prim.ModelCache;
 import shaders.Outline3D;
 import h3d.prim.Cube;
 import h3d.mat.Pass;
@@ -12,6 +13,8 @@ import h3d.scene.Object;
  * or push around using a unit length cube.
  */
 class Block extends IsoEntity3D {
+  public var cache:ModelCache;
+
   public function new(x:Int, y:Int, z:Int) {
     super(x, y, z);
   }
