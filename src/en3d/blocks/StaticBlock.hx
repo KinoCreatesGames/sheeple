@@ -11,8 +11,13 @@ import h3d.scene.Object;
  */
 class StaticBlock extends Block {
   override function setBody(prim:Primitive, root:Object) {
-    super.setBody(prim, root);
-    var mesh:Mesh = cast body;
-    mesh.material.color.setColor(0x200f2f);
+    if (cache != null) {
+      var model = cache.loadModel(hxd.Res.models.static_block);
+      model.getMaterials().iter((mat) -> {
+        mat.shadows = false;
+      });
+      root.addChild(model);
+      body = model;
+    }
   }
 }
