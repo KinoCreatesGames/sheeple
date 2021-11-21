@@ -1,5 +1,6 @@
 package en3d;
 
+import en3d.collectibles.Shard;
 import en3d.collectibles.Checkpoint;
 import en3d.blocks.Spike;
 import en3d.blocks.BlackHole;
@@ -49,6 +50,13 @@ class Player3D extends IsoEntity3D {
   public static inline var MOVE_DT:Float = 0.1;
 
   public static inline var BOUNCE_HEIGHT:Int = 4;
+
+  /**
+   * The shard score amount. 
+   * The amount you get for collecting a 
+   * shard.
+   */
+  public static inline var SHARD_SCORE:Int = 100;
 
   /**
    * Amount of time to wait before resetting the 
@@ -159,7 +167,12 @@ class Player3D extends IsoEntity3D {
               level.checkpointPosition.set(collectible.cx, collectible.cy,
                 collectible.cz);
               level.reachedCheckPos = true;
+              level.saveCheckpoint();
             }
+            collectible.kill(this);
+          case Shard:
+            // Update the level score
+            level.score += SHARD_SCORE;
             collectible.kill(this);
           case _:
             // Kill the collectible

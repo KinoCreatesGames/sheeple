@@ -1,5 +1,6 @@
 package scn;
 
+import dn.data.SavedData;
 import en3d.collectibles.Shard;
 import en3d.collectibles.Checkpoint;
 import h3d.col.Point;
@@ -213,7 +214,16 @@ class Level3D extends Process3D {
   }
 
   public function createEntities() {
-    player = new en3d.Player3D(0, 11, 5, root3);
+    // Load checkpoint and start x, y, z
+    loadCheckpoint();
+    if (reachedCheckPos) {
+      var cp = checkpointPosition;
+      player = new en3d.Player3D(Std.int(cp.x), Std.int(cp.y), Std.int(cp.z),
+        root3);
+    } else {
+      player = new en3d.Player3D(0, 11, 5, root3);
+      clearCheckpoint();
+    }
     playerStartPos = new Vector(player.cx, player.cy, player.cz);
 
     // base primitive for all blocks
@@ -416,6 +426,48 @@ class Level3D extends Process3D {
    * transition.
    */
   public function completeLevel() {}
+
+  /**
+   * Saves the checkpoint position to the data
+   * so that we can load it on restart of
+   * the level.
+   */
+  public function saveCheckpoint() {
+    var checkPoint = {
+      reachedCheckPos: true,
+      x: checkpointPosition.x,
+      y: checkpointPosition.y,
+      z: checkpointPosition.z
+    };
+    SavedData.save('Checkpoint', checkPoint);
+  }
+
+  /**
+   * Load the checkpoint information
+   * from the saved data. We can then restart
+   * at the point of the map.
+   */
+  public function loadCheckpoint() {
+    if (SavedData.exists('Checkpoint')) {
+      var data = SavedData.load('Checkpoint', {
+        reachedCheckPos: false,
+        x: 0,
+        y: 0,
+        z: 0
+      });
+      reachedCheckPos = data.reachedCheckPos;
+      checkpointPosition.set(data.x, data.y, data.z);
+    }
+  }
+
+  /**
+   * Clear checkpoint information
+   * from the saved data.
+   */
+  public function clearCheckpoint() {
+    checkpointPosition.set(0, 0, 0);
+    return SavedData.delete('Checkpoint');
+  }
 
   override function update() {
     super.update();

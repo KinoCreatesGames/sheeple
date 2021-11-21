@@ -59,6 +59,13 @@ class Pause extends dn.Process {
       restartLevel();
     }
 
+    var restartAtChk = new TxtBtn(win.outerWidth,
+      Lang.t._('Restart At Checkpoint'), win);
+    restartAtChk.center();
+    restartAtChk.onClick = (event) -> {
+      restartLevelChk();
+    }
+
     var quit = new TxtBtn(win.outerWidth, Lang.t._('To Title'), win);
     quit.center();
     quit.onClick = (event) -> {
@@ -74,6 +81,13 @@ class Pause extends dn.Process {
   }
 
   public function restartLevel() {
+    ct.releaseExclusivity();
+    Game.ME.level.resume();
+    Game.ME.reloadCurrentLevel();
+    this.destroy();
+  }
+
+  public function restartLevelChk() {
     ct.releaseExclusivity();
     Game.ME.level.resume();
     Game.ME.reloadCurrentLevel();
