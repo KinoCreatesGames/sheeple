@@ -1,4 +1,6 @@
 -cp src
+-lib ase
+-lib heaps-aseprite
 -lib castle
 -lib heaps
 -lib deepnightLibs

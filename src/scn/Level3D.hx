@@ -1,5 +1,7 @@
 package scn;
 
+import en3d.collectibles.Checkpoint;
+import h3d.col.Point;
 import h3d.prim.ModelCache;
 import en3d.blocks.StdBlock;
 import en3d.blocks.CrackedBlock;
@@ -203,6 +205,14 @@ class Level3D extends Process3D {
     prim.addNormals();
     prim.addUVs();
 
+    // Base primitive for all collectible 2D elements
+    // Top left, Top Right, Bottom Left, Bottom Right
+    var quadPrim = new h3d.prim.Quads([new Point(-1, 0,
+      1), new Point(0, 0, 1), new Point(-1, 0, 0), new Point(0, 0, 0)]);
+    quadPrim.translate(-0.5, -0.5, -0.5);
+    quadPrim.addNormals();
+    quadPrim.addUVs();
+
     // Create test blocks for collision checks
     cache = new h3d.prim.ModelCache();
     for (z in 0...5) {
@@ -226,6 +236,10 @@ class Level3D extends Process3D {
         }
       }
     }
+    // Create Checkpoint test
+    var checkPoint = new Checkpoint(player.cx, player.cy, player.cz + 1);
+    checkPoint.setBody(quadPrim, root3);
+    collectibles.add(checkPoint);
     // cache.dispose();
   }
 
