@@ -36,13 +36,19 @@ class FrameShader extends hxsl.Shader {
       // Gets pixel coordinate color
       // Take UVs and discard UVs outside the current frmae
       var frameCut = (1. / totalFrames);
+
       var frame = int((global.time - startTime) * speed) % totalFrames;
+
       if (loop) {
         frame = frame * frameCut;
       }
       var uv = input.uv;
+      // uv.x *= -1; // flips UV to right hand
       var pos = vec2(uv.x * frameCut, uv.y);
-      pos = vec2(pos.x + frame, pos.y);
+      // pos.x *= -1;
+      pos = vec2(pos.x + frame, pos.y); // add frame amount to x coordinate
+
+      // textureColor = vec4(frame, frame, frame, frame);
       textureColor = texture.get(pos);
       pixelColor = textureColor;
     }
@@ -50,6 +56,7 @@ class FrameShader extends hxsl.Shader {
 
   public function new(texture, totalFrames = -1, speed = 1.) {
     super();
+    this.startTime = 0.0;
     this.texture = texture;
     this.totalFrames = totalFrames;
     this.speed = speed;

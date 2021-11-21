@@ -1,5 +1,6 @@
 package scn;
 
+import en3d.collectibles.Shard;
 import en3d.collectibles.Checkpoint;
 import h3d.col.Point;
 import h3d.prim.ModelCache;
@@ -75,6 +76,19 @@ class Level3D extends Process3D {
   public var blockGroup:Group<Block>;
   public var collectibles:Group<Collectible>;
 
+  /**
+   * Position of the checkpoint
+   * if the player has picked up the checkpoint
+   * in the level.
+   */
+  public var checkpointPosition:Vector;
+
+  /**
+   * Whether the player has reached the checkpoint
+   * at the current point in time for this level.
+   */
+  public var reachedCheckPos:Bool;
+
   public var camera(get, never):h3d.Camera;
 
   // TODO: Add plane for the levels
@@ -129,6 +143,10 @@ class Level3D extends Process3D {
     blockPrim.unindex();
     blockPrim.addNormals();
     blockPrim.addUVs();
+
+    // Default level variables
+    checkpointPosition = new Vector(0, 0, 0);
+    reachedCheckPos = false;
     // Create level root
     setupLight();
     createSkyBox();
@@ -369,6 +387,8 @@ class Level3D extends Process3D {
   public function pushState() {
     var state:LvlState = {
       playerPos: new Vector(player.cx, player.cy, player.cz),
+      reachedCheckpoint: reachedCheckPos,
+      checkpointPos: checkpointPosition,
       blockPositions: blockGroup.members.map((block) -> new Vector(block.cx,
         block.cy, block.cz))
     }

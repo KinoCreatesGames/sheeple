@@ -153,7 +153,14 @@ class Player3D extends IsoEntity3D {
         var collectibleType = Type.getClass(collectible);
         switch (collectibleType) {
           case Checkpoint:
-          // Save Position
+            // Save Position
+            if (level != null) {
+              // Let player checkpoint being marked.
+              level.checkpointPosition.set(collectible.cx, collectible.cy,
+                collectible.cz);
+              level.reachedCheckPos = true;
+            }
+            collectible.kill(this);
           case _:
             // Kill the collectible
             collectible.kill(this);

@@ -2,6 +2,8 @@ import h3d.Vector;
 
 typedef LvlState = {
   playerPos:Vector,
+  reachedCheckpoint:Bool,
+  checkpointPos:Vector,
   blockPositions:Array<Vector>
 }
 
