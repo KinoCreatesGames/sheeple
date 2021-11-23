@@ -1,3 +1,4 @@
+import dn.data.SavedData;
 import scn.Settings;
 import en3d.Entity3D;
 import h3d.scene.Object;
@@ -80,10 +81,19 @@ class Game extends dn.Process {
     // Play Game Loop Music
     // bgm = hxd.Res.music.juhani_stage.play(true, 0.5);
     // level = new Level(proj.all_levels.Level_0);
+    clearTemporaryData();
     level = new Level3D();
 
     hud.show();
     fx = new Fx();
+  }
+
+  /**
+   * Clear the temporary data for the game.
+   * 
+   */
+  public function clearTemporaryData() {
+    SavedData.delete('Checkpoint');
   }
 
   public inline function invalidateHud() {

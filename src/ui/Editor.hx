@@ -295,7 +295,7 @@ class Editor extends dn.Process {
   }
 
   public function addCollectibleTypes() {
-    var types = [BambooR, JLife, JetPack];
+    var types = [ShardR, CheckpointR];
 
     for (collectible in types) {
        var btn = new TxtBtn(collectible, collectiblePanel);
@@ -338,6 +338,7 @@ class Editor extends dn.Process {
     var up = ct.upPressed(); 
     var down = ct.downPressed();
     var action = ct.aPressed();
+    var actionC = ct.bPressed();
     var delete = ct.isKeyboardPressed(K.DELETE);
     var hasInput = [left, right, up, down, action, delete].exists((el) -> el  );
 
@@ -363,6 +364,11 @@ class Editor extends dn.Process {
         if (lvlBlock == null) {
           level.createBlock(currentBlockType,Std.int(plCursor.x), Std.int(plCursor.y), Std.int(plCursor.z));
         }
+      } else if(actionC) {
+         var lvlBlock = level.levelCollided(Std.int(plCursor.x), Std.int(plCursor.y), Std.int(plCursor.z));
+        if (lvlBlock == null) {
+          level.createCollectible(currentCollectibleType,Std.int(plCursor.x), Std.int(plCursor.y), Std.int(plCursor.z));
+        } 
       } else if (delete) {
          var lvlBlock = level.levelCollided(Std.int(plCursor.x), Std.int(plCursor.y), Std.int(plCursor.z));
          if (lvlBlock != null) {

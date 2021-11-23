@@ -1,5 +1,6 @@
 package scn;
 
+import GameTypes.CollectibleTypes;
 import dn.data.SavedData;
 import en3d.collectibles.Shard;
 import en3d.collectibles.Checkpoint;
@@ -305,6 +306,26 @@ class Level3D extends Process3D {
     block.setBody(blockPrim, root3);
     // block.body.toMesh().material.color.setColor(0xaa00aa);
     blockGroup.add(block);
+  }
+
+  public function createCollectible(collectibleType:CollectibleTypes, x:Int,
+      y:Int, z:Int) {
+    var collectible:Collectible = null; // new Block(x, y, z);
+    switch (collectibleType) {
+      case ShardR:
+        collectible = new Shard(x, y, z);
+      case CheckpointR:
+        collectible = new Checkpoint(x, y, z);
+
+      case _:
+        // No work to be done
+    }
+    // collectible.cache = cache;
+    // Set body based on collectible
+    collectible.setBody(null, root3);
+    // block.body.toMesh().material.color.setColor(0xaa00aa);
+    // blockGroup.add(block);
+    collectibles.add(collectible);
   }
 
   /** TRUE if given coords are in level bounds **/

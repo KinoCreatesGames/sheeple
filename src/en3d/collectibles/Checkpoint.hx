@@ -18,8 +18,6 @@ class Checkpoint extends Collectible {
   }
 
   override function setBody(prim:Primitive, root:Object) {
-    super.setBody(prim, root);
-
     var bb = new Billboard(root, cx, cy, cz);
     billb = bb;
     body = bb.mesh;

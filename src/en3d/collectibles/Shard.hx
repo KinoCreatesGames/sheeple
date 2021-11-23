@@ -9,7 +9,6 @@ class Shard extends Collectible {
   public var billB:Billboard;
 
   override function setBody(prim:Primitive, root:Object) {
-    super.setBody(prim, root);
     billB = new Billboard(root, cx, cy, cz);
     body = billB.mesh;
     var tex = hxd.Res.img.shard_Sheet.toTexture();

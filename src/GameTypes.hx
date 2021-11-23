@@ -49,6 +49,8 @@ enum abstract BlockType(String) from String to String {
 
 enum abstract CollectibleTypes(String) from String to String {
   var BambooR = 'BambooRockets';
+  var ShardR = 'Shard';
+  var CheckpointR = 'Checkpoint';
   var JLife = 'Life';
   var JetPack = 'JetPack';
 }
