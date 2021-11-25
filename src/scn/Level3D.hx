@@ -1,5 +1,6 @@
 package scn;
 
+import h3d.scene.Object;
 import GameTypes.CollectibleTypes;
 import dn.data.SavedData;
 import en3d.collectibles.Shard;
@@ -163,7 +164,20 @@ class Level3D extends Process3D {
     camera.zFar = 50;
 
     // On level Creation setup camera controller
-    new h3d.scene.CameraController(null, root3).loadFromCamera();
+    var controller = new OrthoCamController(null, root3);
+    controller.followTarget = player.body;
+    controller.loadFromCamera();
+    // Set Follower
+    // var test = new Object(player.body);
+    // test.x = 20;
+    // test.y = 20;
+    // test.z = 30;
+    // camera.follow = {
+    //   pos: test,
+    //   target: player.body
+    // };
+
+    // new h3d.scene.CameraController(null, root3).loadFromCamera();
   }
 
   public function setupLight() {

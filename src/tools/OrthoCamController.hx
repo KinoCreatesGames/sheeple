@@ -77,6 +77,12 @@ class OrthoCamController extends h3d.scene.Object {
   var targetPos = new h3d.Vector(10. / 25., Math.PI / 4, Math.PI * 5 / 13);
   var targetOffset = new h3d.Vector(0, 0, 0, 0);
 
+  /**
+   * Target to follow within the game
+   * during an update.
+   */
+  public var followTarget:Object;
+
   inline function get_distance() {
     return curPos.x / curOffset.w;
   }
@@ -111,6 +117,7 @@ class OrthoCamController extends h3d.scene.Object {
   public function new(?distance, ?parent:Object) {
     super(parent);
     name = 'OrthoCamController';
+    followTarget = null;
     set(distance);
   }
 
@@ -192,6 +199,20 @@ class OrthoCamController extends h3d.scene.Object {
     syncCamera();
   }
 
+  override function onAdd() {
+    super.onAdd();
+    scene = getScene();
+    scene.addEventListener(onEvent);
+    if (curOffset.w == 0) {
+      // Vertical Field of view
+      // Usually doesn't change
+      curPos.x *= scene.camera.fovY;
+    }
+    curOffset.w = scene.camera.fovY; // Vertical field of view
+    targetPos.load(curPos); // assigns the curPos to the target Pos
+    targetOffset.load(curOffset); // assigns the curOffset to targetOffset
+  }
+
   /**
    * Field of view calculation
    * that will update the target 
@@ -210,15 +231,59 @@ class OrthoCamController extends h3d.scene.Object {
 
   public dynamic function onClick(e:hxd.Event) {}
 
+  /**
+   * Handles any events for the camera from the
+   * current scene the 3D Object is on.
+   * This handles the controls for when you want to 
+   * move the camera in some direction.
+   * @param e 
+   */
   public function onEvent(e:hxd.Event) {
     var p:Object = this;
     while (p != null) {
-      // If p isn't visible, propagate to the parent.
+      // If p isn't visible, propagate the event.
       if (!p.visible) {
         e.propagate = true;
         return;
       }
+      // If p is visible and assign p as the highest
+      // object in the tree that is not null (most likely the scene)
       p = p.parent;
+    }
+
+    // Matches what to do based on the kind of the event
+    switch (e.kind) {
+      case EPush:
+        @:privateAccess scene.events.startCapture(onEvent,
+          function() pushing = -1, e.touchId);
+        pushing = e.button;
+        pushTime = haxe.Timer.stamp();
+        pushStartX = pushX = e.relX;
+        pushStartY = pushY = e.relY;
+      // Handling when the mouse button is released
+      case ERelease, EReleaseOutside:
+        if (pushing == e.button) {
+          pushing = -1;
+          @:privateAccess scene.events.stopCapture();
+          if (e.kind == ERelease
+            && haxe.Timer.stamp() - pushTime < 0.2
+            && hxd.Math.distance(e.relX - pushStartX,
+              e.relY - pushStartY) < 5) {
+            onClick(e);
+          }
+        }
+      case EMove:
+        switch (pushing) {
+          // Right Mouse Button
+          case 2:
+            rot(e.relX - pushX, e.relY - pushY);
+            pushX = e.relX;
+            pushY = e.relY;
+          case _:
+            // Do nothing
+        }
+
+      case _:
     }
   }
 
@@ -268,6 +333,9 @@ class OrthoCamController extends h3d.scene.Object {
     targetOffset = targetOffset.add(v);
   }
 
+  /**
+   * Camera sync(update loop)
+   */
   function syncCamera() {
     var cam = getScene().camera;
     var distance = distance;
@@ -304,6 +372,15 @@ class OrthoCamController extends h3d.scene.Object {
       return;
     }
 
+    /**
+     * Adds following to the game via the camera.
+     */
+    if (followTarget != null) {
+      targetOffset.x = followTarget.x;
+      targetOffset.y = followTarget.y;
+      targetOffset.z = followTarget.z;
+    }
+
     if (moveX != 0) {
       targetPos.y += moveX * 0.003 * rotateSpeed;
       moveX *= 1 - friction;
@@ -329,6 +406,7 @@ class OrthoCamController extends h3d.scene.Object {
     }
 
     var dt = hxd.Math.min(1, 1 - Math.pow(smooth, ctx.elapsedTime * 60));
+
     var cam = scene.camera;
     curOffset.lerp(curOffset, targetOffset, dt);
     curPos.lerp(curPos, targetPos, dt);

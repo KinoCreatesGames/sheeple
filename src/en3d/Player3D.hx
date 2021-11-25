@@ -169,6 +169,7 @@ class Player3D extends IsoEntity3D {
               level.reachedCheckPos = true;
               level.saveCheckpoint();
             }
+            hxd.Res.sound.Level_Up.play(false, 0.7);
             collectible.kill(this);
           case Shard:
             // Update the level score

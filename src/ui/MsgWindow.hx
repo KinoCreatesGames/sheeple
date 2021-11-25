@@ -12,7 +12,10 @@ class MsgWindow extends dn.Process {
   public var textBuffer:String;
   public var allText:Array<String>;
   public var textIndex:Int;
+  public var width:Int;
+  public var height:Int;
   public var ct:dn.heaps.Controller.ControllerAccess;
+  public var bgColor:Int = 0x0f0f0f;
 
   public function new() {
     super(Main.ME);
@@ -128,9 +131,24 @@ class MsgWindow extends dn.Process {
     ct.releaseExclusivity();
   }
 
+  /**
+   * Hides the window background again.
+   */
+  public function hideBG() {
+    // this.win.backgroundTile.
+    this.win.backgroundTile = h2d.Tile.fromColor(bgColor, width, height, 0);
+  }
+
   public function show() {
     this.win.visible = true;
     ct.takeExclusivity();
+  }
+
+  /**
+   * Shows the window background again.
+   */
+  public function showBG() {
+    this.win.backgroundTile = h2d.Tile.fromColor(bgColor, width, height, 1);
   }
 
   function onClose() {}
