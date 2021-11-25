@@ -1,5 +1,7 @@
 package en3d;
 
+import en3d.blocks.StaticBlock;
+import en3d.blocks.HeavyBlock;
 import en3d.collectibles.Shard;
 import en3d.collectibles.Checkpoint;
 import en3d.blocks.Spike;
@@ -169,11 +171,12 @@ class Player3D extends IsoEntity3D {
               level.reachedCheckPos = true;
               level.saveCheckpoint();
             }
-            hxd.Res.sound.Level_Up.play(false, 0.7);
+            hxd.Res.sound.Level_Up.play(false, 0.8);
             collectible.kill(this);
           case Shard:
             // Update the level score
             level.score += SHARD_SCORE;
+            hxd.Res.sound.collect_collectible.play(false, 0.7);
             collectible.kill(this);
           case _:
             // Kill the collectible
@@ -295,8 +298,8 @@ class Player3D extends IsoEntity3D {
       } else {
         Game.ME.camera.shakeS(0.5, 1);
       }
-      // Update block Pull
-      if (heldBlock != null) {
+      // Update block Pull/Push and not allow for StaticBlock
+      if (heldBlock != null && !Std.isOfType(heldBlock, StaticBlock)) {
         var xAxis = heldBlock.cx == cx;
         var yAxis = heldBlock.cy == cy;
         var movedBlock = false;

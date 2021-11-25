@@ -290,7 +290,7 @@ class Level3D extends Process3D {
     var block:Block = null; // new Block(x, y, z);
     switch (blockType) {
       case BlockB:
-        block = new Block(x, y, z);
+        block = new StdBlock(x, y, z);
       case BounceB:
         block = new Bounce(x, y, z);
       case CrackedB:

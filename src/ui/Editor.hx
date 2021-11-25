@@ -338,9 +338,9 @@ class Editor extends dn.Process {
     var up = ct.upPressed(); 
     var down = ct.downPressed();
     var action = ct.aPressed();
-    var actionC = ct.bPressed();
+    var actionC = ct.xPressed();
     var delete = ct.isKeyboardPressed(K.DELETE);
-    var hasInput = [left, right, up, down, action, delete].exists((el) -> el  );
+    var hasInput = [left, right, up, down, action, actionC, delete].exists((el) -> el  );
 
     if (hasInput) {
       //Move the block placement
