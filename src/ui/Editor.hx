@@ -1,6 +1,7 @@
 package ui;
 
 
+import haxe.io.Bytes;
 import dn.data.SavedData;
 import en3d.blocks.StaticBlock;
 import en3d.blocks.IceBlock;
@@ -125,9 +126,9 @@ class Editor extends dn.Process {
     save.onClick = (event) -> {
       #if debug
       trace('Clicked save');
-      #else
-      saveLevel();
+      #else 
       #end
+      saveLevel();
     };
 
     var load = new TxtBtn(24, Lang.t._('Load'), menuBar);
@@ -146,8 +147,7 @@ class Editor extends dn.Process {
       trace('Clicked Clear level');
       #else 
       #end
-      clearLevel();
-       
+      clearLevel(); 
     };
 
 
@@ -167,9 +167,9 @@ class Editor extends dn.Process {
     //Create Save Data
     var lvlSave:LvlSave = {
       playerStart: {
-        x:0,
-        y:0,
-        z:0
+        x:Std.int(level.playerStartPos.x),
+        y:Std.int(level.playerStartPos.y),
+        z:Std.int(level.playerStartPos.y)
       },
       blocks:[]
     }
@@ -183,20 +183,37 @@ class Editor extends dn.Process {
         }
       });
     }
-    SavedData.save('Level', lvlSave);
+    
+    var lvJson = haxe.Json.stringify(lvlSave);
+    hxd.File.saveAs(Bytes.ofString(lvJson));
+    // SavedData.save('Level', lvlSave);
   }
 
   public function loadLevel() {
-    var data :LvlSave = cast SavedData.load('Level', {
-       playerStart: {
-        x:0,
-        y:0,
-        z:0
-      },
-      blocks:[]
+    hxd.File.browse((browseSelect) -> {
+      browseSelect.load((fileBytes) -> {
+        var lvDataStr =  fileBytes.getString(0, fileBytes.length);
+        var lvData:LvlSave = cast haxe.Json.parse(lvDataStr);
+        var player = lvData.playerStart;
+        trace(lvData);
+        //Add blocks using the data
+        for(block in lvData.blocks) {
+          var pos = block.pos;
+          level.createBlock(block.blockType, pos.x, pos.y, pos.z);
+        }
+        level.player.setPosCase(player.x, player.y, player.z);
+      });
     });
+    // var data :LvlSave = cast SavedData.load('Level', {
+    //    playerStart: {
+    //     x:0,
+    //     y:0,
+    //     z:0
+    //   },
+    //   blocks:[]
+    // });
     #if debug
-    trace('Level Data loaded ${data}');
+    // trace('Level Data loaded ${data}');
     #else
     #end
   }

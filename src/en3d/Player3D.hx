@@ -32,6 +32,7 @@ enum abstract BDir(String) from String to String {
 class Player3D extends IsoEntity3D {
   public var ct:ControllerAccess;
   public var stepCount:Int = 0;
+  public var isIce:Bool = false;
 
   /**
    * The amount of steps you've gone up without stopping.
@@ -83,6 +84,7 @@ class Player3D extends IsoEntity3D {
     pstate = STAND;
     moveComplete = true;
     mvTween = new Tweenie(Const.FPS);
+    isIce = false;
     setup();
     hud.invalidate();
     setBody(root);
@@ -411,9 +413,13 @@ class Player3D extends IsoEntity3D {
     // Blocks
     var block = level.levelCollided(x, y, cz);
     var topBlock = level.levelCollided(x, y, cz + 1);
+    var belowBlock = level.levelCollided(x, y, cz - 1);
     var pushBlock = heldBlock;
     moveZ = 0;
     // Used for checking if the player should fall later
+
+    // Handle Ice Physics
+    updateIceState(belowBlock);
 
     if (pushBlock != null && pushBlock.cx == x && pushBlock.cy == y) {
       return false;
@@ -433,6 +439,7 @@ class Player3D extends IsoEntity3D {
         #end
         // press the Z
         moveZ = 1;
+        updateIceState(block);
         // This means we also updated the z access
         return true;
       }
@@ -463,5 +470,13 @@ class Player3D extends IsoEntity3D {
     // }
 
     return true;
+  }
+
+  public function updateIceState(block:Block) {
+    if (Std.isOfType(block, IceBlock)) {
+      isIce = true;
+    } else {
+      isIce = false;
+    }
   }
 }
