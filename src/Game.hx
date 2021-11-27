@@ -113,6 +113,22 @@ class Game extends dn.Process {
     editor.startEditor();
   }
 
+  /**
+   * Hide the user interface
+   */
+  public inline function hideUI() {
+    if (level != null) {}
+    hud.hide();
+  }
+
+  /**
+   * Show the user interface
+   */
+  public inline function showUI() {
+    if (level != null) {}
+    hud.show();
+  }
+
   /** CDB file changed on disk**/
   public function onCdbReload() {}
 
