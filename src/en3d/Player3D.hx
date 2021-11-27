@@ -115,7 +115,10 @@ class Player3D extends IsoEntity3D {
     handleBlockCollision();
     handleCollectibleCollision();
     handleHanging();
-    processFall();
+    // If the editor is not visible run as normal
+    if (!game.editor.visible) {
+      processFall();
+    }
   }
 
   public function handleUndo() {

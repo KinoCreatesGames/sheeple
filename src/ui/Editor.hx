@@ -33,15 +33,21 @@ class Editor extends dn.Process {
 
   public var level(get, never):Level3D;
 
-  public inline function get_level() {
+   inline function get_level() {
     return Game.ME.level;
   }
 
   public var win(get, never):hxd.Window; 
 
-  public inline function get_win() {
+   inline function get_win() {
     return hxd.Window.getInstance();
   } 
+
+  public var visible(get, never):Bool;
+
+   inline function get_visible() {
+    return flow.visible;
+  }
 
   //Controller access
    var ct:dn.heaps.Controller.ControllerAccess;
@@ -355,7 +361,7 @@ class Editor extends dn.Process {
     var up = ct.upPressed(); 
     var down = ct.downPressed();
     var action = ct.aPressed();
-    var actionC = ct.xPressed();
+    var actionC = ct.bPressed();
     var delete = ct.isKeyboardPressed(K.DELETE);
     var hasInput = [left, right, up, down, action, actionC, delete].exists((el) -> el  );
 

@@ -370,6 +370,10 @@ class Level3D extends Process3D {
       .first();
   }
 
+  public function playerCollided(x:Int, y:Int, z:Int) {
+    return player.cx == x && player.cy == y && player.cz == z;
+  }
+
   /**
    * Returns the first collectible that is collided with on the current
    * level. Only Collides with the ones that are currently alive.
