@@ -1,5 +1,6 @@
 package en3d;
 
+import haxe.crypto.Sha1;
 import en3d.blocks.StaticBlock;
 import en3d.blocks.HeavyBlock;
 import en3d.collectibles.Shard;
@@ -180,7 +181,8 @@ class Player3D extends IsoEntity3D {
             collectible.kill(this);
           case Shard:
             // Update the level score
-            level.score += SHARD_SCORE;
+            hud.updateScore(SHARD_SCORE);
+            // level.score += SHARD_SCORE;
             hxd.Res.sound.collect_collectible.play(false, 0.7);
             collectible.kill(this);
           case _:

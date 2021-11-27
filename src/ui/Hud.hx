@@ -28,6 +28,9 @@ class Hud extends dn.Process {
   public var highScoreText:h2d.Text;
   public var stepComboText:h2d.Text;
   public var stepCountText:h2d.Text;
+  public var tempScore:Int = 0;
+
+  public var hudTween:Tweenie;
 
   public function new() {
     super(Game.ME);
@@ -36,6 +39,7 @@ class Hud extends dn.Process {
     root.filter = new h2d.filter.ColorMatrix(); // force pixel perfect rendering
 
     flow = new h2d.Flow(root);
+    hudTween = new Tweenie(Const.FPS);
     setupUIElements();
   }
 
@@ -90,8 +94,9 @@ class Hud extends dn.Process {
     root.setScale(Const.UI_SCALE);
   }
 
-  public inline function invalidate()
+  public inline function invalidate() {
     invalidated = true;
+  }
 
   function render() {
     if (level != null) {
@@ -123,6 +128,20 @@ class Hud extends dn.Process {
 
   public function renderStepCombo() {
     stepComboText.text = 'Step Combo ${level.player.stepCombo}';
+  }
+
+  public function updateScore(delta:Int) {
+    tempScore += delta;
+    var t = hudTween.createS(level.score, tempScore, TEase, 0.3);
+    t.end(() -> {
+      // level
+      trace('Complete score tween');
+    });
+  }
+
+  override function update() {
+    super.update();
+    hudTween.update();
   }
 
   override function postUpdate() {
