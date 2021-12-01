@@ -134,6 +134,26 @@ class Level3D extends Process3D {
   public var eBlockAlpha:Float = 1;
   public var eTween:Tween;
 
+  // Threshold Parameters
+
+  /**
+   * The level of the tower the threshold is at
+   * on the z axis. Once the threshold increases,
+   * blocks at that threshold will be marked
+   * to fall from that point on.
+   */
+  public var blockFallThreshold:Int;
+
+  /**
+   * Threshold cooldown before we increase
+   * the threshold limit again.
+   */
+  public static inline var THRESHOLD_CD:Int = 30;
+
+  /**
+   * Sky box texture of the entire
+   * level within the game.
+   */
   var skyTexture:h3d.mat.Texture;
 
   public function new() {
@@ -510,9 +530,21 @@ class Level3D extends Process3D {
 
   override function update() {
     super.update();
+    handleBlockThresholdFall();
     handleEditor();
     handlePause();
     handleGameOver();
+  }
+
+  public function handleBlockThresholdFall() {
+    if (!cd.has('blockThreshold')) {
+      cd.setS('blockThreshold', THRESHOLD_CD, () -> {
+        // Block Threshold  update and blocks update
+        trace('Update threshold');
+        trace(blockFallThreshold);
+        blockFallThreshold += 1;
+      });
+    }
   }
 
   public function handleEditor() {

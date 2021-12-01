@@ -34,7 +34,9 @@ class Block extends IsoEntity3D {
   override function update() {
     super.update();
     if (!cd.has('checkEdges')) {
-      handleEdges();
+      if (!game.editor.visible) {
+        handleEdges();
+      }
     }
   }
 
@@ -50,8 +52,9 @@ class Block extends IsoEntity3D {
     ].exists(el -> el != null);
     var belowBlock = level.levelCollided(cx, cy, cz - 1);
 
-    if ((cz == 0 || belowBlock != null || hasAdjacentBlock)
-      || game.editor.visible) {} else {
+    if ((cz == level.blockFallThreshold || belowBlock != null
+      || hasAdjacentBlock)
+      && cz >= level.blockFallThreshold) {} else {
       // Fall down
       if (level.playerCollided(cx, cy, cz - 1)) {
         // Kill the player within the game using the block.
