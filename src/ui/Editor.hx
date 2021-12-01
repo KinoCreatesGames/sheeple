@@ -68,6 +68,8 @@ class Editor extends dn.Process {
    */
   public var plCursor:h3d.Vector;
 
+  public var plCoordText:h2d.Text;
+
   public static inline var MOVE_SPD:Int = 1;
 
   /**
@@ -106,9 +108,11 @@ class Editor extends dn.Process {
 
     currentBlockType = null;
     setupMenuBar();
+    setupCoordinate();
     setupBlockPanel();
     setupCollectiblePanel();
   }
+
 
   public function setupMenuBar() {
     menuBar = new h2d.Flow(flow);
@@ -168,6 +172,8 @@ class Editor extends dn.Process {
       exitEditor();
     }; 
   }
+
+
 
   public function saveLevel() { 
     //Create Save Data
@@ -260,6 +266,19 @@ class Editor extends dn.Process {
       case _:
         BlockB;
     }
+  }
+
+  public function setupCoordinate() {
+    var panel = new h2d.Flow(flow);
+    panel.backgroundTile = h2d.Tile.fromColor(0x0, 1, 1, 0.8);
+    panel.filter = new PixelOutline(0xffffff, 1);
+    panel.horizontalAlign = FlowAlign.Middle;
+    panel.layout = Vertical;
+    panel.minWidth = Std.int(w() * 0.25);
+
+    plCoordText = new h2d.Text(Assets.fontMedium, panel);
+    plCoordText.text = 'x: 0, y: 0, z: 0';
+    plCoordText.textColor = 0xffffff;
   }
 
   public function setupBlockPanel() {
@@ -401,6 +420,7 @@ class Editor extends dn.Process {
       level.editorBlock.cx = Std.int(plCursor.x); 
       level.editorBlock.cy = Std.int(plCursor.y); 
       level.editorBlock.cz = Std.int(plCursor.z);
+      render();
     }
   }
 
@@ -408,7 +428,11 @@ class Editor extends dn.Process {
   * Renders anything that needs to be redrawn within the game.
   */
   public function render() {
+    renderPLCoords();
+  }
 
+  public function renderPLCoords() {
+    plCoordText.text = '${plCursor.x}, ${plCursor.y}, ${plCursor.z}';
   }
 
   public function startEditor() {
