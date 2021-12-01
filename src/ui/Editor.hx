@@ -70,6 +70,8 @@ class Editor extends dn.Process {
 
   public var plCoordText:h2d.Text;
 
+  public var blockThresholdText:h2d.Text;
+
   public static inline var MOVE_SPD:Int = 1;
 
   /**
@@ -279,6 +281,11 @@ class Editor extends dn.Process {
     plCoordText = new h2d.Text(Assets.fontMedium, panel);
     plCoordText.text = 'x: 0, y: 0, z: 0';
     plCoordText.textColor = 0xffffff;
+
+    blockThresholdText = new h2d.Text(Assets.fontMedium, panel);
+    blockThresholdText.text = '';
+    blockThresholdText.textColor = 0xffffff;
+
   }
 
   public function setupBlockPanel() {
@@ -429,7 +436,18 @@ class Editor extends dn.Process {
   */
   public function render() {
     renderPLCoords();
+    renderBlockThreshold();
   }
+
+  public function renderBlockThreshold() {
+    var result = 'Fall Threshold - ';
+    if(level != null) {
+      result += '${level.blockFallThreshold}';
+    } else {
+      result += 'X';
+    }
+    blockThresholdText.text = result;
+ }
 
   public function renderPLCoords() {
     plCoordText.text = '${plCursor.x}, ${plCursor.y}, ${plCursor.z}';
