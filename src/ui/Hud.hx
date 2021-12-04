@@ -29,6 +29,7 @@ class Hud extends dn.Process {
   public var scoreBG:h2d.Bitmap;
   public var highScoreText:h2d.Text;
   public var highScoreBG:Bitmap;
+  public var stepComboBG:TextureGauge;
   public var stepComboText:h2d.Text;
   public var stepCountText:h2d.Text;
   public var tempScore:Int = 0;
@@ -92,6 +93,10 @@ class Hud extends dn.Process {
   }
 
   public function setupStepCombo() {
+    stepComboBG = new TextureGauge(hxd.Res.img.GaugeFrontPNG.toTile(),
+      hxd.Res.img.GaugeBackPNG.toTile(), root);
+    stepComboBG.flowType = UP_DOWN;
+    stepComboBG.updatePerc(1.);
     stepComboText = new h2d.Text(Assets.fontMedium, flow);
     stepComboText.textColor = 0xffffff;
     stepComboText.text = 'Step Combo 0';
@@ -154,6 +159,7 @@ class Hud extends dn.Process {
 
   public function renderStepCombo() {
     stepComboText.text = 'Step Combo ${level.player.stepCombo}';
+    stepComboBG.updatePerc(level.player.stepComboTime);
   }
 
   public function updateScore(delta:Int) {

@@ -66,7 +66,16 @@ class Player3D extends IsoEntity3D {
    * Amount of time to wait before resetting the 
    * combo to 0.
    */
-  public static inline var STEP_TIMER:Int = 3;
+  public static inline var STEP_TIMER:Int = 8;
+
+  public var stepComboTime(get, never):Float;
+
+  public inline function get_stepComboTime() {
+    if (cd.has('stepCombo')) {
+      return cd.getS('stepCombo') / STEP_TIMER;
+    }
+    return 0.;
+  }
 
   /**
    * The amount to move in the Z aspect.
