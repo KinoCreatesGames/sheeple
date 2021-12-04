@@ -1,5 +1,6 @@
 package ui;
 
+import h2d.Bitmap;
 import h3d.Vector;
 import h2d.Flow.FlowAlign;
 import scn.Level3D;
@@ -25,10 +26,13 @@ class Hud extends dn.Process {
 
   public var livesText:h2d.Text;
   public var scoreText:h2d.Text;
+  public var scoreBG:h2d.Bitmap;
   public var highScoreText:h2d.Text;
+  public var highScoreBG:Bitmap;
   public var stepComboText:h2d.Text;
   public var stepCountText:h2d.Text;
   public var tempScore:Int = 0;
+  public var levelRadar:Bitmap;
 
   public var hudTween:Tweenie;
 
@@ -41,6 +45,7 @@ class Hud extends dn.Process {
     flow = new h2d.Flow(root);
     hudTween = new Tweenie(Const.FPS);
     setupUIElements();
+    dn.Process.resizeAll();
   }
 
   /**
@@ -57,6 +62,7 @@ class Hud extends dn.Process {
     setupHighScore();
     setupStepCount();
     setupStepCombo();
+    setupRadar();
   }
 
   public function setupLives() {
@@ -66,15 +72,23 @@ class Hud extends dn.Process {
   }
 
   public function setupScore() {
-    scoreText = new h2d.Text(Assets.fontMedium, flow);
+    scoreBG = new h2d.Bitmap(hxd.Res.img.ScoreBoardPNG.toTile(), flow);
+    scoreText = new h2d.Text(Assets.fontSmall, scoreBG);
+    var offset = scoreBG.tile.width / 8;
+    scoreText.y += offset;
+    scoreText.x += offset;
     scoreText.textColor = 0xffffff;
-    scoreText.text = 'Score 0';
+    scoreText.text = '0';
   }
 
   public function setupHighScore() {
-    highScoreText = new h2d.Text(Assets.fontMedium, flow);
+    highScoreBG = new h2d.Bitmap(hxd.Res.img.HighScoreBoardPNG.toTile(), flow);
+    highScoreText = new h2d.Text(Assets.fontSmall, highScoreBG);
+    var offset = highScoreBG.tile.width / 8;
+    highScoreText.y += offset;
+    highScoreText.x += offset;
     highScoreText.textColor = 0xffffff;
-    highScoreText.text = 'High Score 0';
+    highScoreText.text = '0';
   }
 
   public function setupStepCombo() {
@@ -89,9 +103,21 @@ class Hud extends dn.Process {
     stepCountText.text = 'Steps 0';
   }
 
+  public function setupRadar() {
+    levelRadar = new h2d.Bitmap(hxd.Res.img.LevelRadarPNG.toTile(), root);
+    resizeRadar();
+  }
+
+  public function resizeRadar() {
+    var offset = 32;
+    var y = ((h() / Const.UI_SCALE) - (levelRadar.tile.height + offset));
+    levelRadar.setPosition(offset, y);
+  }
+
   override function onResize() {
     super.onResize();
     root.setScale(Const.UI_SCALE);
+    resizeRadar();
   }
 
   public inline function invalidate() {
@@ -115,11 +141,11 @@ class Hud extends dn.Process {
   }
 
   public function renderScore() {
-    scoreText.text = 'Score ${level.score}';
+    scoreText.text = '${level.score}';
   }
 
   public function renderHighScore() {
-    highScoreText.text = 'Score ${level.highScore}';
+    highScoreText.text = '${level.highScore}';
   }
 
   public function renderStepCount() {
