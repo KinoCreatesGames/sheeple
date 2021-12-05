@@ -1,5 +1,6 @@
 package scn;
 
+import shaders.PixelationShader;
 import h3d.scene.Object;
 import GameTypes.CollectibleTypes;
 import dn.data.SavedData;

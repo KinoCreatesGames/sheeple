@@ -3,11 +3,18 @@
   It doesn't do much, except creating Main and taking care of app speed ()
 **/
 
+import h3d.pass.ScreenFx;
+import h3d.mat.DepthBuffer;
+import h3d.mat.Texture;
+import shaders.PixelationShader;
+import h3d.Engine;
 import dn.heaps.Controller;
 import dn.heaps.Controller.ControllerAccess;
 
 class Boot extends hxd.App {
   public static var ME:Boot;
+
+  public var pass:h3d.pass.ScreenFx<PixelationShader>;
 
   #if debug
   var tmodSpeedMul = 1.0;
@@ -28,6 +35,8 @@ class Boot extends hxd.App {
     Called when engine is ready, actual app can start
   **/
   override function init() {
+    var shader = new PixelationShader();
+    pass = new ScreenFx<PixelationShader>(shader);
     ME = this;
     new Main(s2d);
     onResize();
@@ -62,5 +71,23 @@ class Boot extends hxd.App {
 
     // Update all dn.Process instances
     dn.Process.updateAll(currentTmod);
+  }
+
+  override function render(e:Engine) {
+    var scn = Boot.ME.s3d;
+    var renderer = scn.renderer;
+    var renderTarget = new Texture(engine.width, engine.height, [Target]);
+    renderTarget.depthBuffer = new DepthBuffer(engine.width, engine.height);
+
+    pass.shader.texture = renderTarget;
+    // renderer.addShader(shader);
+    engine.pushTarget(renderTarget);
+    engine.clear(0, 1);
+    s3d.render(e);
+    engine.popTarget();
+
+    pass.render();
+    s2d.render(e);
+    // super.render(e);
   }
 }
