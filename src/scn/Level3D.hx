@@ -134,6 +134,7 @@ class Level3D extends Process3D {
   public var editorBlockTween:Tweenie;
   public var eBlockAlpha:Float = 1;
   public var eTween:Tween;
+  public var skyMesh:Mesh;
 
   // Threshold Parameters
 
@@ -220,7 +221,7 @@ class Level3D extends Process3D {
     skyTexture.mipMap = Linear;
     var sky = new Sphere(30, 128, 128);
     sky.addNormals();
-    var skyMesh = new Mesh(sky, root3);
+    skyMesh = new Mesh(sky, root3);
     skyMesh.material.mainPass.culling = Front;
     skyMesh.material.mainPass.addShader(new CubeMap(skyTexture));
     skyMesh.material.shadows = false;

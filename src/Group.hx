@@ -23,14 +23,19 @@ class Group<T> {
 
   public inline function add(el:T) {
     members.push(el);
+    maxSize = members.length;
   }
 
   public inline function pop() {
-    return members.pop();
+    var result = members.pop();
+    maxSize = members.length;
+    return result;
   }
 
   public inline function remove(el:T) {
-    return members.remove(el);
+    var result = members.remove(el);
+    maxSize -= 1;
+    return result;
   }
 
   public inline function contains(el:T) {
@@ -38,7 +43,13 @@ class Group<T> {
   }
 
   public inline function hasNext():Bool {
-    return index < members.length;
+    var result = index < members.length;
+    if (result) {
+      return result;
+    } else {
+      index = 0;
+      return result;
+    }
   }
 
   /**
@@ -49,6 +60,7 @@ class Group<T> {
   }
 
   public inline function next() {
-    return members[index++];
+    var result = members[index++];
+    return result;
   }
 }

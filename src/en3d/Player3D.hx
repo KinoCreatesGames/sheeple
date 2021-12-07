@@ -314,8 +314,10 @@ class Player3D extends IsoEntity3D {
       } else {
         Game.ME.camera.shakeS(0.5, 1);
       }
-      // Update block Pull/Push and not allow for StaticBlock
-      if (heldBlock != null && !Std.isOfType(heldBlock, StaticBlock)) {
+      // Block Push Pull
+      // Update block Pull/Push and not allow for StaticBlock or when hanging
+      if (heldBlock != null && !Std.isOfType(heldBlock, StaticBlock)
+        && pstate != HANG) {
         var xAxis = heldBlock.cx == cx;
         var yAxis = heldBlock.cy == cy;
         var movedBlock = false;
