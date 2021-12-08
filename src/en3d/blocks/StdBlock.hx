@@ -1,5 +1,6 @@
 package en3d.blocks;
 
+import shaders.PixelShader;
 import shaders.Outline3D;
 import h3d.prim.Cube;
 import h3d.mat.Pass;
@@ -23,7 +24,10 @@ class StdBlock extends Block {
     // lib.loadAnimation();
     // mesh.material.color.setColor(0xaaaaaa);
     // mesh.material.shadows = false;
-    model.getMaterials().iter((mat) -> mat.shadows = false);
+    model.getMaterials().iter((mat) -> {
+      mat.shadows = false;
+      mat.mainPass.addShader(new PixelShader());
+    });
     root.addChild(model);
     body = model;
     // var shader = new Outline3D();

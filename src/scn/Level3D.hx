@@ -158,6 +158,9 @@ class Level3D extends Process3D {
    */
   var skyTexture:h3d.mat.Texture;
 
+  public var entityParent:Object;
+  public var blockParent:Object;
+
   public function new() {
     super(Game.ME);
     createRootInLayers(Game.ME.scroller, Const.DP_BG);
@@ -252,13 +255,17 @@ class Level3D extends Process3D {
 
   public function createEntities() {
     // Load checkpoint and start x, y, z
+    entityParent = new Object(root3);
+    blockParent = new Object(root3);
+    var bp = blockParent;
+    var ep = entityParent;
     loadCheckpoint();
     if (reachedCheckPos) {
       var cp = checkpointPosition;
       player = new en3d.Player3D(Std.int(cp.x), Std.int(cp.y), Std.int(cp.z),
         root3);
     } else {
-      player = new en3d.Player3D(0, 11, 5, root3);
+      player = new en3d.Player3D(0, 11, 5, ep);
       clearCheckpoint();
     }
     playerStartPos = new Vector(player.cx, player.cy, player.cz);
@@ -285,7 +292,7 @@ class Level3D extends Process3D {
         for (y in 0...20) {
           var block = new StdBlock(i, y - z, z);
           block.cache = cache;
-          block.setBody(prim, root3);
+          block.setBody(prim, bp);
           blockGroup.add(block);
         }
       }
@@ -296,14 +303,14 @@ class Level3D extends Process3D {
         for (y in 0...10) {
           var block = new StdBlock(i, y, z);
           block.cache = cache;
-          block.setBody(prim, root3);
+          block.setBody(prim, bp);
           blockGroup.add(block);
         }
       }
     }
     // Create Checkpoint test
     var checkPoint = new Checkpoint(player.cx, player.cy, player.cz + 1);
-    checkPoint.setBody(quadPrim, root3);
+    checkPoint.setBody(quadPrim, ep);
     collectibles.add(checkPoint);
     // cache.dispose();
   }
@@ -339,7 +346,7 @@ class Level3D extends Process3D {
     }
     block.cache = cache;
     // Set body
-    block.setBody(blockPrim, root3);
+    block.setBody(blockPrim, blockParent);
     // block.body.toMesh().material.color.setColor(0xaa00aa);
     blockGroup.add(block);
   }
@@ -358,7 +365,7 @@ class Level3D extends Process3D {
     }
     // collectible.cache = cache;
     // Set body based on collectible
-    collectible.setBody(null, root3);
+    collectible.setBody(null, entityParent);
     // block.body.toMesh().material.color.setColor(0xaa00aa);
     // blockGroup.add(block);
     collectibles.add(collectible);
@@ -542,9 +549,11 @@ class Level3D extends Process3D {
     if (!cd.has('blockThreshold')) {
       cd.setS('blockThreshold', THRESHOLD_CD, () -> {
         // Block Threshold  update and blocks update
-        trace('Update threshold');
-        trace(blockFallThreshold);
-        blockFallThreshold += 1;
+        if (!game.editor.visible) {
+          trace('Update threshold');
+          trace(blockFallThreshold);
+          blockFallThreshold += 1;
+        }
       });
     }
   }

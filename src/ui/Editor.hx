@@ -421,6 +421,7 @@ class Editor extends dn.Process {
       } else if (delete) {
          var lvlBlock = level.levelCollided(Std.int(plCursor.x), Std.int(plCursor.y), Std.int(plCursor.z));
          if (lvlBlock != null) {
+           level.blockGroup.remove(lvlBlock);
            lvlBlock.destroy();
          }
       }

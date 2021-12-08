@@ -22,7 +22,13 @@ class Boot extends hxd.App {
   public var renderer:CustomRenderer;
 
   public var pass:h3d.pass.ScreenFx<PixelationShader>;
-  public var s3dTarget:Scene;
+  public var s3dDepthTarget:Scene;
+  public var s3dEntityTarget:Scene;
+  public var s3dBlockTarget:Scene;
+
+  public var depthTarget:Texture;
+  public var entityTarget:Texture;
+  public var blockTarget:Texture;
 
   #if debug
   var tmodSpeedMul = 1.0;
@@ -47,10 +53,27 @@ class Boot extends hxd.App {
     s3d.renderer = renderer;
     var shader = new PixelationShader();
     pass = new ScreenFx<PixelationShader>(shader);
-    s3dTarget = new h3d.scene.Scene();
+    createTargets();
+    setupScenes();
     ME = this;
     new Main(s2d);
     onResize();
+  }
+
+  public function setupScenes() {
+    s3dDepthTarget = new h3d.scene.Scene();
+    s3dDepthTarget.renderer = new CustomRenderer();
+    s3dEntityTarget = new h3d.scene.Scene();
+    s3dEntityTarget.renderer = new CustomRenderer();
+  }
+
+  public function createTargets() {
+    depthTarget = new Texture(engine.width, engine.height, [Target]);
+    depthTarget.depthBuffer = new DepthBuffer(engine.width, engine.height);
+    blockTarget = new Texture(engine.width, engine.height, [Target]);
+    blockTarget.depthBuffer = new DepthBuffer(engine.width, engine.height);
+    entityTarget = new Texture(engine.width, engine.height, [Target]);
+    entityTarget.depthBuffer = new DepthBuffer(engine.width, engine.height);
   }
 
   override function onResize() {
@@ -91,61 +114,28 @@ class Boot extends hxd.App {
    */
   @:access(h3d.scene.Scene, h3d.scene.RenderContext, CustomRenderer)
   override function render(e:Engine) {
-    engine.backgroundColor = 0xffffff;
-    super.render(e);
-    var depthTex = renderer.depthTex.clone();
-    var renderTarget = new Texture(engine.width, engine.height, [Target]);
-    renderTarget.depthBuffer = new DepthBuffer(engine.width, engine.height);
-    var renderTargetTwo = new Texture(engine.width, engine.height, [Target]);
-    renderTargetTwo.depthBuffer = new DepthBuffer(engine.width, engine.height);
-
-    pass.shader.texture = renderTarget;
-
-    pass.shader.depthMap = renderer.depthTex;
-    pass.shader.exemptTexture = renderTargetTwo;
-
-    engine.pushTarget(renderTarget);
-    engine.pushTarget(renderTargetTwo);
-
-    // Create Texture with just the player and no other elements
     if (Game.ME != null && Game.ME.level != null) {
+      var entRenderer:CustomRenderer = cast s3dEntityTarget.renderer;
       var level = Game.ME.level;
-      level.skyMesh.visible = false;
-      for (block in level.blockGroup) {
-        block.body.visible = false;
-      }
+      pass.shader.texture = blockTarget;
+      pass.shader.depthTexture = renderer.depthTex;
+      engine.pushTarget(blockTarget);
+      engine.clear(0, 1);
+      s3d.render(e);
+      engine.popTarget();
+      engine.pushTarget(entityTarget);
+      s3dEntityTarget.removeChildren();
+      s3dEntityTarget.camera.load(s3d.camera);
+      s3dEntityTarget.addChild(level.entityParent.clone());
+      engine.clear(0, 1);
+      s3dEntityTarget.render(e);
+      engine.popTarget();
+      pass.shader.exemptDepthTexture = entRenderer.depthTex.clone();
+      pass.shader.exemptTexture = entityTarget;
+      pass.render();
+    } else {
+      s3d.render(e);
     }
-    engine.clear(0, 1); // Clear render texture and depth buffer
-    s3d.render(e);
-
-    engine.popTarget();
-
-    // Create a texture with just the blocks and no player
-    if (Game.ME != null && Game.ME.level != null) {
-      var level = Game.ME.level;
-      level.player.body.visible = false;
-      level.skyMesh.visible = false;
-      for (block in level.blockGroup) {
-        block.body.visible = true;
-      }
-    }
-    // TODO: Add render passes that capture sky box
-    engine.clear(0, 1); // Clear render texture and depth buffer
-    s3d.render(e);
-    pass.shader.exemptDepthTexture = renderer.depthTex.clone();
-    pass.shader.depthTexture = depthTex; // Initial texture
-    engine.popTarget();
-    // Clean up before pass render
-    if (Game.ME != null && Game.ME.level != null) {
-      var level = Game.ME.level;
-      level.player.body.visible = true;
-      // for (block in level.blockGroup) {
-      //   block.body.visible = true;
-      // }
-    }
-
-    // pass.pass.depth(true, Always);
-    pass.render();
 
     s2d.render(e);
   }

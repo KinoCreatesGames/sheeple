@@ -204,6 +204,7 @@ class Player3D extends IsoEntity3D {
 
   public function handleHanging() {
     var belowBlock = level.levelCollided(cx, cy, cz - 2);
+    var belowBlockTwo = level.levelCollided(cx, cy, cz - 1);
     // Block at same level  in next cell && one above
     // check adjacent blocks as well
     var hasAdjacentBlock = [
@@ -212,7 +213,7 @@ class Player3D extends IsoEntity3D {
       level.levelCollided(cx, cy + 1, cz),
       level.levelCollided(cx, cy - 1, cz)
     ].exists((el) -> el != null);
-    if (belowBlock == null && hasAdjacentBlock) {
+    if (belowBlock == null && belowBlockTwo == null && hasAdjacentBlock) {
       // Nothing below you on moving to the next area
       // Set the user to hang at this point
 

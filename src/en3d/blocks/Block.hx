@@ -7,6 +7,7 @@ import h3d.mat.Pass;
 import dn.heaps.filter.PixelOutline;
 import h3d.prim.Primitive;
 import h3d.scene.Object;
+import shaders.PixelShader;
 
 /**
  * A block in the game for the player to stand on
