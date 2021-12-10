@@ -134,13 +134,17 @@ class Boot extends hxd.App {
       engine.clear(0, 1);
       s3dEntityTarget.render(e);
       engine.popTarget();
+      var tex = new Texture(engine.width, engine.height, [Target]);
+      tex.depthBuffer = new DepthBuffer(engine.width, engine.height);
+      engine.pushTarget(tex);
       pass.shader.exemptDepthTexture = entRenderer.depthTex.clone();
       pass.shader.exemptTexture = entityTarget;
       pass.render();
+      engine.popTarget();
+      // Trans Pass Render using previous pass render texture
       transPass.shader.endTime = 7.;
       transPass.shader.time = renderer.ctx.time;
-
-      transPass.shader.texture = blockTarget;
+      transPass.shader.texture = tex;
       transPass.shader.transitionTexture = hxd.Res.textures.TransitionOne.toTexture();
       transPass.render();
     } else {
