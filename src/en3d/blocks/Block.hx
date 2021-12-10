@@ -20,7 +20,7 @@ class Block extends IsoEntity3D {
     super(x, y, z);
   }
 
-  public function setBody(prim:Primitive, root:Object) {
+  public function setBody(prim:Primitive, root:Object, ?lightDir) {
     var mesh = new h3d.scene.Mesh(prim, null, root);
     mesh.material.color.setColor(0xaaaaaa);
     mesh.material.shadows = false;

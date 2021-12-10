@@ -1,5 +1,6 @@
 package en3d.blocks;
 
+import shaders.ToonShader;
 import shaders.PixelShader;
 import shaders.Outline3D;
 import h3d.prim.Cube;
@@ -17,7 +18,7 @@ class StdBlock extends Block {
     super(x, y, z);
   }
 
-  override public function setBody(prim:Primitive, root:Object) {
+  override public function setBody(prim:Primitive, root:Object, ?lightDir) {
     var model = cache.loadModel(hxd.Res.models.block);
     // var mesh = new h3d.scene.Mesh(prim, null, root);
     // var obj = lib.makeObject();
@@ -26,7 +27,12 @@ class StdBlock extends Block {
     // mesh.material.shadows = false;
     model.getMaterials().iter((mat) -> {
       mat.shadows = false;
-      mat.mainPass.addShader(new PixelShader());
+      if (lightDir != null) {
+        // trace('add shader');
+        var shader = new ToonShader(mat.texture, lightDir);
+        shader.depthT = untyped Boot.ME.s3d.renderer.depthTex;
+        mat.mainPass.addShader(shader);
+      }
     });
     root.addChild(model);
     body = model;

@@ -13,7 +13,7 @@ class BlackHole extends Block {
     super(x, y, z);
   }
 
-  override function setBody(prim:Primitive, root:Object) {
+  override function setBody(prim:Primitive, root:Object, ?lightDir) {
     super.setBody(prim, root);
     var mesh:Mesh = cast body;
     mesh.material.color.setColor(0xff00aa);

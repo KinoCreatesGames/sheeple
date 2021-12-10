@@ -15,7 +15,7 @@ class CrackedBlock extends Block {
    */
   public var stepCount:Int = 3;
 
-  override function setBody(prim:Primitive, root:Object) {
+  override function setBody(prim:Primitive, root:Object, ?lightDir) {
     super.setBody(prim, root);
     var mesh:Mesh = cast body;
     mesh.material.color.setColor(0x3f0f0f);

@@ -29,6 +29,6 @@ class PixelationShader extends ScreenShader {
 
   public function new() {
     super();
-    this.pixels = 480;
+    this.pixels = 312;
   }
 }

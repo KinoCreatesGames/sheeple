@@ -12,6 +12,7 @@ import h3d.pass.ScreenFx;
 import h3d.mat.DepthBuffer;
 import h3d.mat.Texture;
 import shaders.PixelationShader;
+import shaders.TransitionShader;
 import h3d.Engine;
 import dn.heaps.Controller;
 import dn.heaps.Controller.ControllerAccess;
@@ -22,6 +23,7 @@ class Boot extends hxd.App {
   public var renderer:CustomRenderer;
 
   public var pass:h3d.pass.ScreenFx<PixelationShader>;
+  public var transPass:h3d.pass.ScreenFx<TransitionShader>;
   public var s3dDepthTarget:Scene;
   public var s3dEntityTarget:Scene;
   public var s3dBlockTarget:Scene;
@@ -53,6 +55,7 @@ class Boot extends hxd.App {
     s3d.renderer = renderer;
     var shader = new PixelationShader();
     pass = new ScreenFx<PixelationShader>(shader);
+    transPass = new ScreenFx<TransitionShader>(new TransitionShader());
     createTargets();
     setupScenes();
     ME = this;
@@ -112,7 +115,8 @@ class Boot extends hxd.App {
    * and allow for grabbing depth texture.
    * Using the forward renderer.
    */
-  @:access(h3d.scene.Scene, h3d.scene.RenderContext, CustomRenderer)
+  @:access(h3d.scene.Scene, h3d.scene.RenderContext, h3d.scene.Renderer,
+    CustomRenderer)
   override function render(e:Engine) {
     if (Game.ME != null && Game.ME.level != null) {
       var entRenderer:CustomRenderer = cast s3dEntityTarget.renderer;
@@ -133,6 +137,12 @@ class Boot extends hxd.App {
       pass.shader.exemptDepthTexture = entRenderer.depthTex.clone();
       pass.shader.exemptTexture = entityTarget;
       pass.render();
+      transPass.shader.endTime = 7.;
+      transPass.shader.time = renderer.ctx.time;
+
+      transPass.shader.texture = blockTarget;
+      transPass.shader.transitionTexture = hxd.Res.textures.TransitionOne.toTexture();
+      transPass.render();
     } else {
       s3d.render(e);
     }

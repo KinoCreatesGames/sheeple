@@ -10,7 +10,7 @@ import h3d.scene.Object;
  * Player can't move these blocks.
  */
 class StaticBlock extends Block {
-  override function setBody(prim:Primitive, root:Object) {
+  override function setBody(prim:Primitive, root:Object, ?lightDir) {
     if (cache != null) {
       var model = cache.loadModel(hxd.Res.models.static_block);
       model.getMaterials().iter((mat) -> {

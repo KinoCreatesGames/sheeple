@@ -14,6 +14,6 @@ class PixelShader extends BaseMesh {
 
   public function new() {
     super();
-    this.pixels = 512;
+    this.pixels = 256;
   }
 }

@@ -136,6 +136,9 @@ class Level3D extends Process3D {
   public var eTween:Tween;
   public var skyMesh:Mesh;
 
+  // Light direction for the scene
+  public var lightDir:Vector;
+
   // Threshold Parameters
 
   /**
@@ -184,7 +187,7 @@ class Level3D extends Process3D {
 
     // Update Camera
     camera.target.set(player.body.x, player.body.y, player.body.z);
-    camera.pos.set(20, 30, 30);
+    camera.pos.set(player.body.x + 5, 18, player.body.z + 8);
     camera.zNear = 1;
     camera.zFar = 50;
 
@@ -206,8 +209,9 @@ class Level3D extends Process3D {
   }
 
   public function setupLight() {
-    var light = new h3d.scene.fwd.DirLight(new h3d.Vector(0.5, 0.5, -0.5),
-      root3);
+    lightDir = new h3d.Vector(0.2, 0.3, -1);
+    var light = new h3d.scene.fwd.DirLight(lightDir, root3);
+
     light.enableSpecular = true;
   }
 
@@ -292,7 +296,7 @@ class Level3D extends Process3D {
         for (y in 0...20) {
           var block = new StdBlock(i, y - z, z);
           block.cache = cache;
-          block.setBody(prim, bp);
+          block.setBody(prim, bp, lightDir);
           blockGroup.add(block);
         }
       }
@@ -303,7 +307,7 @@ class Level3D extends Process3D {
         for (y in 0...10) {
           var block = new StdBlock(i, y, z);
           block.cache = cache;
-          block.setBody(prim, bp);
+          block.setBody(prim, bp, lightDir);
           blockGroup.add(block);
         }
       }
@@ -346,7 +350,7 @@ class Level3D extends Process3D {
     }
     block.cache = cache;
     // Set body
-    block.setBody(blockPrim, blockParent);
+    block.setBody(blockPrim, blockParent, lightDir);
     // block.body.toMesh().material.color.setColor(0xaa00aa);
     blockGroup.add(block);
   }

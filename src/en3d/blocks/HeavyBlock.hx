@@ -10,7 +10,7 @@ import h3d.scene.Object;
  * to the regular block.
  */
 class HeavyBlock extends Block {
-  override function setBody(prim:Primitive, root:Object) {
+  override function setBody(prim:Primitive, root:Object, ?lightDir) {
     if (cache != null) {
       var model = cache.loadModel(hxd.Res.models.heavy_block);
       model.getMaterials().iter((mat) -> {

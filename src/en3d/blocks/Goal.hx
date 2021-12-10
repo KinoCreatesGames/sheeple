@@ -10,7 +10,7 @@ import h3d.scene.Object;
  * to the next level.
  */
 class Goal extends Block {
-  override function setBody(prim:Primitive, root:Object) {
+  override function setBody(prim:Primitive, root:Object, ?lightDir) {
     super.setBody(prim, root);
     var mesh:Mesh = cast body;
     mesh.material.color.setColor(0x00ff00);

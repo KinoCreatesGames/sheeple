@@ -5,7 +5,7 @@ import h3d.prim.Primitive;
 import h3d.scene.Object;
 
 class MysteryBlock extends Block {
-  override function setBody(prim:Primitive, root:Object) {
+  override function setBody(prim:Primitive, root:Object, ?lightDir) {
     super.setBody(prim, root);
     var mesh:Mesh = cast body;
     mesh.material.color.setColor(0xffffaa);
