@@ -3,6 +3,7 @@
   It doesn't do much, except creating Main and taking care of app speed ()
 **/
 
+import h3d.Vector;
 import renderer.CustomRenderer;
 import h3d.scene.fwd.Renderer;
 import h3d.scene.fwd.Renderer.DepthPass;
@@ -142,9 +143,12 @@ class Boot extends hxd.App {
       pass.render();
       engine.popTarget();
       // Trans Pass Render using previous pass render texture
-      transPass.shader.endTime = 7.;
+      transPass.shader.endTime = 10.;
       transPass.shader.time = renderer.ctx.time;
       transPass.shader.texture = tex;
+      transPass.shader.cutColor = Vector.fromColor(0xffaabb);
+      transPass.shader.cutOut = true;
+      transPass.shader.cutOutTexture = hxd.Res.textures.CutOutTexture.toTexture();
       transPass.shader.transitionTexture = hxd.Res.textures.TransitionOne.toTexture();
       transPass.render();
     } else {
