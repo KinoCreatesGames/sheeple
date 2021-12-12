@@ -34,6 +34,7 @@ class Hud extends dn.Process {
   public var stepCountText:h2d.Text;
   public var tempScore:Int = 0;
   public var levelRadar:Bitmap;
+  public var undoArrow:Bitmap;
 
   public var hudTween:Tweenie;
 
@@ -58,12 +59,20 @@ class Hud extends dn.Process {
     flow.layout = Horizontal;
     flow.verticalAlign = FlowAlign.Middle;
     flow.horizontalSpacing = 12;
+    setupUndo();
     setupLives();
     setupScore();
     setupHighScore();
     setupStepCount();
     setupStepCombo();
     setupRadar();
+  }
+
+  public function setupUndo() {
+    undoArrow = new Bitmap(hxd.Res.img.UndoArrow.toTile(), root);
+    undoArrow.blendMode = Alpha;
+    undoArrow.visible = false;
+    resizeUndo();
   }
 
   public function setupLives() {
@@ -119,10 +128,16 @@ class Hud extends dn.Process {
     levelRadar.setPosition(offset, y);
   }
 
+  public function resizeUndo() {
+    undoArrow.x = w() * 0.23;
+    undoArrow.y = h() * 0.19;
+  }
+
   override function onResize() {
     super.onResize();
     root.setScale(Const.UI_SCALE);
     resizeRadar();
+    resizeUndo();
   }
 
   public inline function invalidate() {

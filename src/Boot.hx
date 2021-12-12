@@ -137,20 +137,23 @@ class Boot extends hxd.App {
       engine.popTarget();
       var tex = new Texture(engine.width, engine.height, [Target]);
       tex.depthBuffer = new DepthBuffer(engine.width, engine.height);
-      engine.pushTarget(tex);
+      // Push target will render to to the target rather than the screen
+      // Without successive render calls to handle the case
+      // engine.pushTarget(tex);
       pass.shader.exemptDepthTexture = entRenderer.depthTex.clone();
       pass.shader.exemptTexture = entityTarget;
       pass.render();
-      engine.popTarget();
+      // engine.popTarget();
+
       // Trans Pass Render using previous pass render texture
-      transPass.shader.endTime = 10.;
-      transPass.shader.time = renderer.ctx.time;
-      transPass.shader.texture = tex;
-      transPass.shader.cutColor = Vector.fromColor(0xffaabb);
-      transPass.shader.cutOut = true;
-      transPass.shader.cutOutTexture = hxd.Res.textures.CutOutTexture.toTexture();
-      transPass.shader.transitionTexture = hxd.Res.textures.TransitionOne.toTexture();
-      transPass.render();
+      // transPass.shader.endTime = 10.;
+      // transPass.shader.time = renderer.ctx.time;
+      // transPass.shader.texture = tex;
+      // transPass.shader.cutColor = Vector.fromColor(0xffaabb);
+      // transPass.shader.cutOut = true;
+      // transPass.shader.cutOutTexture = hxd.Res.textures.CutOutTexture.toTexture();
+      // transPass.shader.transitionTexture = hxd.Res.textures.TransitionOne.toTexture();
+      // // transPass.render();
     } else {
       s3d.render(e);
     }

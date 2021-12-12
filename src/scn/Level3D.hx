@@ -161,6 +161,8 @@ class Level3D extends Process3D {
    */
   var skyTexture:h3d.mat.Texture;
 
+  public var effectTween:Tweenie;
+
   public var entityParent:Object;
   public var blockParent:Object;
 
@@ -179,6 +181,7 @@ class Level3D extends Process3D {
     checkpointPosition = new Vector(0, 0, 0);
     reachedCheckPos = false;
     // Create level root
+    createTweens();
     setupLight();
     createSkyBox();
     createGroups();
@@ -206,6 +209,10 @@ class Level3D extends Process3D {
     // };
 
     // new h3d.scene.CameraController(null, root3).loadFromCamera();
+  }
+
+  public function createTweens() {
+    effectTween = new Tweenie(Const.FPS);
   }
 
   public function setupLight() {
@@ -439,6 +446,7 @@ class Level3D extends Process3D {
    * Triggers an undo within the game
    * and puts you back to the last state of the game
    * that we have access to.
+   * Also shows the undo arrow on screen through a tween.
    */
   public function triggerUndo() {
     var oldState = stateStack.pop();
@@ -458,6 +466,14 @@ class Level3D extends Process3D {
         block.cy = Std.int(bPos.y);
         block.cz = Std.int(bPos.z);
       }
+      // Handle Undo Arrow
+      var undoArrow = Game.ME.hud.undoArrow;
+      undoArrow.visible = true;
+      undoArrow.alpha = 1.0;
+      var t = effectTween.createS(undoArrow.alpha, 0.0, TEaseIn, 0.5);
+      t.end(() -> {
+        undoArrow.visible = false;
+      });
     }
   }
 
@@ -543,10 +559,15 @@ class Level3D extends Process3D {
 
   override function update() {
     super.update();
+    handleTweens();
     handleBlockThresholdFall();
     handleEditor();
     handlePause();
     handleGameOver();
+  }
+
+  public function handleTweens() {
+    effectTween.update();
   }
 
   public function handleBlockThresholdFall() {
@@ -623,6 +644,8 @@ class Level3D extends Process3D {
     for (collectible in collectibles) {
       collectible.destroy();
     }
+
+    effectTween.destroy();
     cache.dispose();
     super.onDispose();
   }
