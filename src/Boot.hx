@@ -3,6 +3,9 @@
   It doesn't do much, except creating Main and taking care of app speed ()
 **/
 
+import particles.Snow2D;
+import shaders.SnowShader;
+import shaders.VignetteRadialShader;
 import h3d.Vector;
 import renderer.CustomRenderer;
 import h3d.scene.fwd.Renderer;
@@ -14,6 +17,7 @@ import h3d.mat.DepthBuffer;
 import h3d.mat.Texture;
 import shaders.PixelationShader;
 import shaders.TransitionShader;
+import shaders.ColorShader;
 import h3d.Engine;
 import dn.heaps.Controller;
 import dn.heaps.Controller.ControllerAccess;
@@ -61,6 +65,7 @@ class Boot extends hxd.App {
     setupScenes();
     ME = this;
     new Main(s2d);
+    new Snow2D(s2d, hxd.Res.textures.SnowTex.toTexture());
     onResize();
   }
 
@@ -137,23 +142,36 @@ class Boot extends hxd.App {
       engine.popTarget();
       var tex = new Texture(engine.width, engine.height, [Target]);
       tex.depthBuffer = new DepthBuffer(engine.width, engine.height);
+      var texTest = new Texture(engine.width, engine.height, [Target]);
+      tex.depthBuffer = new DepthBuffer(engine.width, engine.height);
       // Push target will render to to the target rather than the screen
       // Without successive render calls to handle the case
-      // engine.pushTarget(tex);
+      engine.pushTarget(tex);
       pass.shader.exemptDepthTexture = entRenderer.depthTex.clone();
       pass.shader.exemptTexture = entityTarget;
       pass.render();
-      // engine.popTarget();
+      engine.popTarget();
+      var noiseTex = hxd.Res.textures.NoiseTex.toTexture();
+
+      // Works as expected, except rendering to target and not screen
+      // var shader = new VignetteRadialShader(.45, Vector.fromColor(0x00aafa),
+      //   tex);
+      // shader.addDistortion = true;
+      // shader.noiseTex = noiseTex;
+      // shader.time = renderer.ctx.time;
+      // var shaderTwo = new SnowShader(Vector.fromColor(0xffffff), tex, noiseTex);
+      // shaderTwo.time = renderer.ctx.time;
+      new ScreenFx(new ColorShader(Vector.fromColor(0xa0a0ff), tex)).render();
 
       // Trans Pass Render using previous pass render texture
       // transPass.shader.endTime = 10.;
       // transPass.shader.time = renderer.ctx.time;
-      // transPass.shader.texture = tex;
+      // transPass.shader.texture = texTest;
       // transPass.shader.cutColor = Vector.fromColor(0xffaabb);
       // transPass.shader.cutOut = true;
       // transPass.shader.cutOutTexture = hxd.Res.textures.CutOutTexture.toTexture();
       // transPass.shader.transitionTexture = hxd.Res.textures.TransitionOne.toTexture();
-      // // transPass.render();
+      // transPass.render();
     } else {
       s3d.render(e);
     }
